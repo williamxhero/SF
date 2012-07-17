@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 
-
 namespace StockFilter
 {
 	public class date
@@ -11,6 +10,26 @@ namespace StockFilter
 		int day;
 	}
 
+	public class price
+	{
+		float _open;
+		float _high;
+		float _low;
+		float _close;
+	}
+
+	public class indicator
+	{
+		float _volume;
+	}
+
+	public class DateData
+	{
+		date _date;
+		price _price;
+		indicator _indic;
+	}
+
 	/// <summary>
 	/// Quote infomation
 	/// </summary>
@@ -18,19 +37,32 @@ namespace StockFilter
 	{
 		private string _code;
 		private string _name;
-		public class Data
+		List<DateData> _history;
+
+		/// <summary>
+		/// too much data need to load/unload _history dynamiclly
+		/// </summary>
+		public void Load ()
 		{
-			date _dat;
-			float _open;
-			float _high;
-			float _low;
-			float _close;
-			float _volume;
+
 		}
 
-		List<Data> _history;
-	}
+		/// <summary>
+		/// too much data need to load/unload _history dynamiclly
+		/// </summary>
+		public void Unload ()
+		{
 
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void Update ()
+		{
+			// @"http://ichart.finance.yahoo.com/table.csv?s=300072.sz");
+		}
+	}
 
 	/// <summary>
 	/// Quote manager.
@@ -40,27 +72,28 @@ namespace StockFilter
 		/// <summary>
 		/// code to quota infomation
 		/// </summary>
-		Dictionary<string, Quote> dictionary = new Dictionary<string, Quote>();
+		Dictionary<string, Quote> dictionary = new Dictionary<string, Quote> ();
 
 		/// <summary>
 		/// fetch from net.
 		/// </summary>
-		public void Update()
+		public void Update ()
 		{
-			Save();
+			//50 each page. so the cursor should be 1, 51, 101, 151,...
+			//http://www.sse.com.cn/sseportal/webapp/datapresent/SSEQueryStockInfoAct?reportName=BizCompStockInfoRpt&CURSOR=101
+			Save ();
 		}
 
 		/// <summary>
 		/// load from desk
 		/// </summary>
-		public void Load()
+		public void Load ()
 		{
-			//50 each page. so the cursor should be 1, 51, 101, 151,...
-			//http://www.sse.com.cn/sseportal/webapp/datapresent/SSEQueryStockInfoAct?reportName=BizCompStockInfoRpt&CURSOR=101
 		}
 
-		public void Save()
+		public void Save ()
 		{
+
 		}
 	}
 }
