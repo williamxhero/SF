@@ -3,6 +3,34 @@ using System.Collections.Generic;
 
 namespace StockFilter
 {
+	class market
+	{
+		public enum type
+		{
+			ShangHai,
+			ShenZhen,
+		}
+		public string toString ()
+		{
+			switch (_value) {
+			case type.ShangHai:
+				return "ss";
+			case type.ShenZhen:
+				return "sz";
+			}
+			return "";
+		}
+
+		private type _value;
+	}
+
+	public class code
+	{
+		int _code;
+		market _market;
+		string _name;
+	}
+
 	public class date
 	{
 		int year;
@@ -23,7 +51,7 @@ namespace StockFilter
 		float _volume;
 	}
 
-	public class DateData
+	public class dateData
 	{
 		date _date;
 		price _price;
@@ -35,9 +63,8 @@ namespace StockFilter
 	/// </summary>
 	public class Quote
 	{
-		private string _code;
-		private string _name;
-		List<DateData> _history;
+		public code _code = new code ();
+		List<dateData> _history = new List<dateData> ();
 
 		/// <summary>
 		/// too much data need to load/unload _history dynamiclly
@@ -72,7 +99,7 @@ namespace StockFilter
 		/// <summary>
 		/// code to quota infomation
 		/// </summary>
-		Dictionary<string, Quote> dictionary = new Dictionary<string, Quote> ();
+		Dictionary<string, Quote> _allQuote = new Dictionary<string, Quote> ();
 
 		/// <summary>
 		/// fetch from net.
@@ -89,12 +116,16 @@ namespace StockFilter
 		/// </summary>
 		public void Load ()
 		{
+
 		}
 
 		public void Save ()
 		{
-
+			foreach (object o in _allQuote) {
+				Data.share ().SaveQuote ((Quote)o);
+			}
 		}
+
 	}
 }
 
