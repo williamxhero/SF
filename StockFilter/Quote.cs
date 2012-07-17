@@ -1,21 +1,34 @@
 using System;
+using System.Collections.Generic;
+
 
 namespace StockFilter
 {
+	public class date
+	{
+		int year;
+		int month;
+		int day;
+	}
+
+	/// <summary>
+	/// Quote infomation
+	/// </summary>
 	public class Quote
 	{
-		public string _code;
-		public string _name;
-
-		public string GetCode()
+		private string _code;
+		private string _name;
+		public class Data
 		{
-
+			date _dat;
+			float _open;
+			float _high;
+			float _low;
+			float _close;
+			float _volume;
 		}
 
-		public void SetNumber(string num)
-		{
-
-		}
+		List<Data> _history;
 	}
 
 

@@ -5,60 +5,11 @@ using System.Net;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
+
 
 
 namespace StockFilter
 {
-	public class Quote
-	{
-		string _code;
-		public string GetCode()
-		{
-
-		}
-		public void SetNumber(string num)
-		{
-			_code = num;
-			Process();
-		}
-
-		private void Procss()
-		{
-			//沪市A:  600  601
-			//沪市B:  900
-			//深市A:  000
-			//深市B:  200
-
-		}
-	}
-
-	/// <summary>
-	/// Quote manager.
-	/// </summary>
-	public class QuoteManager
-	{
-		Dictionary<string, string> dictionary = new Dictionary<string, string>();
-
-		/// <summary>
-		/// fetch from net.
-		/// </summary>
-		public void Update()
-		{
-			Save();
-		}
-
-		/// <summary>
-		/// load from desk
-		/// </summary>
-		public void Load()
-		{
-		}
-
-		public void Save()
-		{
-		}
-	}
 
 	public class Data
 	{

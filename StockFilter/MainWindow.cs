@@ -18,7 +18,7 @@ public partial class MainWindow: Gtk.Window
 	}
 	protected void FetchFromNet (object sender, EventArgs e)
 	{
-		_dat.Fetch();
+		//_dat.Fetch();
 	}
 
 }
