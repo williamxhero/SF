@@ -36,7 +36,7 @@
         <child>
           <widget class="Gtk.MenuBar" id="menubar1">
             <property name="MemberName" />
-            <node name="menubar1" type="Menubar">
+            <node name="__gtksharp_124_Stetic_Editor_ActionMenuBar" type="Menubar">
               <node type="Menu" action="FetchAction">
                 <node type="Menuitem" action="refreshAction" />
               </node>
