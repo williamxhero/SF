@@ -24,20 +24,27 @@ namespace StockFilter
 		}
 
 		public type _value;
-	}
+	}//market
 
-	public struct infomation
+	public struct information
 	{
 		public int _code;
 		public market _market;
 		public string _name; ///< text code like MSFT 吴忠仪表
-		public void copy(infomation other)
+		public void copy(information other)
 		{
 			_code = other._code;
 			_market = other._market;
 			_name = other._name;
 		}
-	}
+		public information(int c, market m, string n)
+		{
+			_code = c;
+			_market = m;
+			_name = n;
+		}
+		public static information EMPTY;
+	}//information
 
 	public struct date
 	{
@@ -67,18 +74,18 @@ namespace StockFilter
 	}
 
 	/// <summary>
-	/// Quote infomation
+	/// Quote information
 	/// </summary>
 	public class Quote
 	{
-		public infomation _info;
+		public information _info;
 		//List<dateData> _history = new List<dateData>();
 
 		public Quote()
 		{
 		}
 
-		public Quote(infomation info)
+		public Quote(information info)
 		{
 			_info = info;
 		}
@@ -126,7 +133,8 @@ namespace StockFilter
 
 		private QuoteManager()
 		{
-			_parsers.Add(new WebStockList_SH());
+			//_parsers.Add(new WebStockList_SH());
+			_parsers.Add(new WebStockList_SZ());
 		}
 
 		static private QuoteManager _this = new QuoteManager();
@@ -136,16 +144,16 @@ namespace StockFilter
 			return _this;
 		}
 		/// <summary>
-		/// code to quota infomation
+		/// code to quota information
 		/// </summary>
 		private Dictionary<int, Quote> _allQuote = new Dictionary<int, Quote>();
 
-		private void PutListIntoDict(List<infomation> list)
+		private void SaveInfomation(information info)
 		{
-			foreach (var info in list) {
-				if(_allQuote.ContainsKey(info._code)) continue;
-				_allQuote.Add(info._code, new Quote(info));
-			}
+			Quote q = new Quote(info);
+			q.Save();
+			if(_allQuote.ContainsKey(info._code)) return;
+			_allQuote.Add(info._code, q);
 		}
 
 		public Quote this [int num_code] {
@@ -164,10 +172,8 @@ namespace StockFilter
 		public void Update()
 		{
 			foreach (var parser in _parsers) {
-				List<infomation> list = parser.GetAllQuotesInfomation();
-				PutListIntoDict(list);
+				parser.GetAllQuotesInfomation(SaveInfomation);
 			}
-			Save();
 		}
 
 		/// <summary>
@@ -177,14 +183,6 @@ namespace StockFilter
 		{
 
 		}
-
-		public void Save()
-		{
-			foreach (var q in _allQuote) {
-				q.Value.Save();
-			}
-		}
-
 
 	}
 }

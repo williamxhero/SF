@@ -10,7 +10,7 @@ public partial class MainWindow: Gtk.Window
 	{
 		Build();
 		QuoteManager.share().Update();
-		//StockFilter.Data.share().CreateDB();
+		StockFilter.Data.share().CreateDB();
 	}
 	
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)

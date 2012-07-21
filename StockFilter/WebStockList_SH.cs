@@ -9,108 +9,86 @@ namespace StockFilter
 	/// </summary>
 	public class WebStockList_SH : WebStockList
 	{
-		private int pageNum = 0;
-		private string rawString;
-
-		protected override void DoFillList()
-		{
-			ReadAllPages();
-		}
-
-		private void ReadAllPages()
-		{
-			if (pageNum == 0) {
-				ReadPageCount();
-			}
-
-			for (int i = 0; i< pageNum; i++) {
-				Output.Log("Web fetching SH stock codes. page " + i);
-				ReadPage(i);
-			}
-		}
-
-		private string ReadPageRaw(int begin_index)
-		{
-			string url = @"http://www.sse.com.cn/sseportal/webapp/datapresent/SSEQueryStockInfoAct?reportName=BizCompStockInfoRpt&CURSOR=" + begin_index;
-			return WebUtil.Share().FetchWebPage(url);			
-		}
-
-		static string listbegin = @"<span class=""table3"">查询条件：</span>";
-		static string listend = @"页/共<strong>";
-		static string codeBegin = "COMPANY_CODE=";
-
-		int RecordOne(ref string list, int curpos)
-		{
-			do{
-				int code_pos = list.IndexOf(codeBegin, curpos);
-				curpos = code_pos + codeBegin.Length;
-				if (code_pos < 0) return curpos;
-
-				string strCode = list.Substring(curpos, 6);
-				int nCode = int.Parse(strCode);
-				if(nCode < 600000) 
-					break;
-
-				int name_pos = list.IndexOf("<td ", curpos);
-				if (name_pos < 0) 
-					break;
-				curpos = name_pos + 4;
-
-				name_pos = list.IndexOf(">", curpos);
-				if(name_pos < 0) 
-					break;
-				curpos = name_pos = name_pos + 1;
-
-				int name_pos_end = list.IndexOf("</td>", curpos);	
-				if(name_pos_end < 0) 
-					break;
-				curpos = name_pos_end + 5;
-
-				string strName = list.Substring(name_pos, name_pos_end - name_pos); 
-				if(strCode == "") 
-					break;
-				AddInfo(nCode, strName, market.type.ShangHai);
-				return curpos;
-
-			}while(false);
-
-			throw new FormatException("web content was uncompeleted. current string pos : " + list.Substring(curpos, 512));
-		}
-
-		private void ReadPage(int pg)
-		{
-			//50 each page. so the cursor should be 1, 51, 101, 151,...
-			int begin_index = pg * 50 + 1;
-			int cell_index = begin_index + 50;
-
-			//save one fetching time.  1st page already fetched by  ReadPageCount();
-			if (begin_index > 1){
-				rawString = ReadPageRaw(begin_index);
-			}
-
-			//fastforward to  key point 
-			string list =Mid(rawString, listbegin, listend);
-			//StringBuilder sb = new StringBuilder(list);
-
-			int curpos = 0;
-			//found each quote info:
-			for (int i = 1; i< cell_index; i++) {
-				curpos = RecordOne(ref list, curpos);
-			}
-		}
+		protected override string GetMarketName(){ return "SH";}
+		protected override int EntriesPerPage(){return 50;}
 
 		static string keystring = "页/共<strong>";
 		static string endKey = "</strong>页";
-
-		private int ReadPageCount()
+		protected override string ParseMaxPage(string rawString)
 		{
-			rawString = ReadPageRaw(1);
 			//found the max page info:
-			string num =Mid(rawString, keystring, endKey);
-			pageNum = int.Parse(num);
-			return pageNum;
+			string num = Mid(rawString, keystring, endKey);
+			return num;
 		}
 
+		protected override int GetWebPageIndex(int pg){
+			int begin_index = (pg - 1) * 50 + 1;
+			return begin_index;
+		}
+
+		protected override string GetWebPageURL(int cid, int webIndex)
+		{
+			string url = @"http://www.sse.com.cn/sseportal/webapp/datapresent/SSEQueryStockInfoAct?reportName=BizCompStockInfoRpt&CURSOR=" + webIndex;
+			return url;
+		}
+
+		static string listbegin = @"证券简称</td>";
+		static string listend = @"页/共<strong>";
+
+		protected override string GetWebPageTableString(string rawString)
+		{						
+			string list = Mid(rawString, listbegin, listend);
+			return list;
+		}
+
+
+		static string codeBegin = "COMPANY_CODE=";
+
+		protected override int RecordOne(string list, int curpos, out information info)
+		{
+			info = information.EMPTY;
+
+			//code
+			int code_pos = list.IndexOf(codeBegin, curpos);
+			if (code_pos < 0){
+				return -1; //this page don't have enough
+			}
+			curpos = code_pos + codeBegin.Length;
+			string strCode = list.Substring(curpos, 6);
+			int nCode;
+			if( ! int.TryParse(strCode, out nCode)){
+				RecordOne_Throw( -1, list, curpos);
+			}
+			if (nCode < 600000)
+				RecordOne_Throw( nCode, list, curpos);
+
+			//name
+			int name_pos = list.IndexOf("<td", curpos); 
+			if (name_pos < 0)
+				RecordOne_Throw(nCode, list, curpos);
+
+			curpos = name_pos + 4;
+			name_pos = list.IndexOf(">", curpos);
+			if (name_pos < 0)
+				RecordOne_Throw(nCode, list, curpos);
+
+			curpos = name_pos = name_pos + 1;
+			int name_pos_end = list.IndexOf("</td>", curpos);
+			if (name_pos_end < 0)
+				RecordOne_Throw(nCode, list, curpos);
+
+			string strName = list.Substring(name_pos, name_pos_end - name_pos); 
+			if (strCode == "")
+				RecordOne_Throw(nCode, list, curpos);
+
+			curpos = name_pos_end + 5;
+
+			info._code = nCode;
+			info._market._value = market.type.ShangHai;
+			info._name = strName;
+
+			return curpos;
+		}
 
 	}//class
 }//namespace

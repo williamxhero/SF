@@ -28,7 +28,7 @@ namespace StockFilter
 			SqliteConnection conn = new SqliteConnection(souce);
 			conn.Open();
 			SqliteCommand cmd = conn.CreateCommand();
-			string sql = "insert or replace into stock_info values("+ c._info._code +", \""+ c._info._name + "\", \""+ c._info._market +"\");";
+			string sql = "insert or replace into stock_info values("+c._info._market+", "+c._info._code+", \""+c._info._name+"\");";
 			cmd.CommandText = sql;
 			cmd.ExecuteNonQuery();
 			conn.Close();
@@ -39,12 +39,11 @@ namespace StockFilter
 		/// Loads all empty quotes.
 		/// </summary>
 		/// <returns>
-		/// The all quotes only have basic infomation like code.
+		/// The all quotes only have basic information like code.
 		/// </returns>
 		public List<Quote> LoadAllQuotesEmpty()
 		{
 			List<Quote> allQ = new List<Quote>();
-
 			return allQ;
 		}
 
@@ -67,7 +66,7 @@ namespace StockFilter
 			//cmd.CommandText = "drop table stock_info";
 			//cmd.ExecuteNonQuery();
 
-			cmd.CommandText = "CREATE TABLE if not exists stock_info(si_code int primary key not null unique, si_name string, si_market int);";
+			cmd.CommandText = "CREATE TABLE if not exists stock_info(si_market int not null, si_code int not null, si_name string not null, primary key(si_code, si_market));";
 			cmd.ExecuteNonQuery();
 
 			conn.Close();
