@@ -9,8 +9,9 @@ public partial class MainWindow: Gtk.Window
 	public MainWindow(): base (Gtk.WindowType.Toplevel)
 	{
 		Build();
-		QuoteManager.share().Update();
-		StockFilter.Data.share().CreateDB();
+		Calculator.share().CalcMA();
+		//QuoteManager.share().LoadInformation();
+
 	}
 	
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)

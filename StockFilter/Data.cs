@@ -1,76 +1,58 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Mono.Data.Sqlite;
-
 
 namespace StockFilter
 {
-	public class Data
+	/// <summary>
+	/// Data. Instance part.
+	/// </summary>
+	public partial class Data
 	{
-		private Data()
-		{
-			souce = "Data Source=stocks.db";
-			CreateDB();
-		}
-
 		private static Data _this = new Data();
 
-		static public Data share()
+		public static Data share()
 		{
 			return _this;
 		}
+	};
 
-		static string souce;
+	/// <summary>
+	/// Data. DB basic part.
+	/// </summary>
+	public partial class Data
+	{
+		private static string dbfile;
+		private static string souce;
 
-		public void SaveQuote(Quote c)
+		private Data()
 		{
-			//CreateDB();
-			SqliteConnection conn = new SqliteConnection(souce);
-			conn.Open();
-			SqliteCommand cmd = conn.CreateCommand();
-			string sql = "insert or replace into stock_info values("+c._info._market+", "+c._info._code+", \""+c._info._name+"\");";
-			cmd.CommandText = sql;
-			cmd.ExecuteNonQuery();
-			conn.Close();
-			Output.Log(sql + "\n");
+			dbfile = "stocks.db";
+			souce = "Data Source=" + dbfile;
 		}
 
-		/// <summary>
-		/// Loads all empty quotes.
-		/// </summary>
-		/// <returns>
-		/// The all quotes only have basic information like code.
-		/// </returns>
-		public List<Quote> LoadAllQuotesEmpty()
-		{
-			List<Quote> allQ = new List<Quote>();
-			return allQ;
-		}
-
-		public date LastData(Quote q)
-		{
-			return new date();
-		}
-
-		public Quote LoadQuoteDetail(Quote q)
-		{
-			return new Quote();
-		}
-
-		public void CreateDB()
+		public void Vaccum()
 		{
 			SqliteConnection conn = new SqliteConnection(souce);
 			conn.Open();
 			SqliteCommand cmd = conn.CreateCommand();
-
-			//cmd.CommandText = "drop table stock_info";
-			//cmd.ExecuteNonQuery();
-
-			cmd.CommandText = "CREATE TABLE if not exists stock_info(si_market int not null, si_code int not null, si_name string not null, primary key(si_code, si_market));";
+			cmd.CommandText = "vacuum;";
 			cmd.ExecuteNonQuery();
-
-			conn.Close();
 		}
-	}
-}
+
+		private bool TableExist(String tableName)
+		{
+			SqliteConnection conn = new SqliteConnection(souce);
+			conn.Open();
+			SqliteCommand cmd = conn.CreateCommand();
+			cmd.CommandText = "SELECT name FROM sqlite_master WHERE name='" + tableName + "'";
+			SqliteDataReader rdr = cmd.ExecuteReader();
+			if (rdr.HasRows)
+				return true;
+			else
+				return false;
+		}
+	}//class
+}//namespace
 

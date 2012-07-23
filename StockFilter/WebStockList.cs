@@ -9,26 +9,29 @@ namespace StockFilter
 	/// </summary>
 	public class WebStockList
 	{
-		public delegate void SaveStockInfomation(information info);
+		public delegate void OnQuoteUpdated(Quote q);
 
 		private int pageNum = 0;
 		private string rawString = "";
-		private SaveStockInfomation _callback;
+		private OnQuoteUpdated _callback;
 
-		public void GetAllQuotesInfomation(SaveStockInfomation callback)
+		public void GetAllQuotesInfomation(OnQuoteUpdated oqu)
 		{
-			_callback = callback;
+			_callback = oqu;
 			int[] cids = GetClass();
 			foreach (int cid in cids) {
 				pageNum = 0;
 				rawString = "";
 				ReadAllPages(cid);
 			}
+			Data.share().Vaccum();
 		}
 
-		private void AddInfo(information info)
+		private void SaveInfomation(information info)
 		{
-			_callback(info);
+			Quote q = new Quote(info);
+			q.SaveInformation();
+			_callback(q);
 		}
 
 		private int ReadPageCount(int cid)
@@ -134,7 +137,7 @@ namespace StockFilter
 
 			//fastforward to  key point 
 			string list = GetWebPageTableString(rawString);
-			list = RemoveAllBlanks(list);
+			list = Util.RemoveAllBlanks(list);
 
 			int curpos = 0;
 			int entriesNum = EntriesPerPage();
@@ -149,7 +152,7 @@ namespace StockFilter
 						break;
 					}
 				}
-				AddInfo(info);
+				SaveInfomation(info);
 			}
 		}
 
@@ -165,39 +168,6 @@ namespace StockFilter
 				Output.Log("general error : " + e.Message + ". move to next page");
 			}
 		}
-
-		public static string Mid(string str, string begin, string end)
-		{
-			int pos_after_end;
-			return Mid(str, 0, begin, end, out pos_after_end);
-		}
-
-		public static string Mid(string str, int offset, string begin, string end, out int pos_after_end)
-		{
-			pos_after_end = -1;
-			int beg_idx = str.IndexOf(begin, offset);
-			if (beg_idx < 0)
-				return "";
-			beg_idx += begin.Length;
-			int end_idx = str.IndexOf(end, beg_idx);
-			if (end_idx < 0)
-				return "";
-			string num = str.Substring(beg_idx, end_idx - beg_idx);
-			pos_after_end = end_idx + end.Length;
-			return num;
-		}
-
-		public static string RemoveAllBlanks(string str)
-		{
-			StringBuilder sb = new StringBuilder(str);
-			sb.Replace("\n", "");
-			sb.Replace("\r", "");
-			sb.Replace(" ", "");
-			sb.Replace("\t", "");
-			return sb.ToString();
-		}
-	}
-
-
+	}//class
 }
 

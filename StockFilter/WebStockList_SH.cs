@@ -17,7 +17,7 @@ namespace StockFilter
 		protected override string ParseMaxPage(string rawString)
 		{
 			//found the max page info:
-			string num = Mid(rawString, keystring, endKey);
+			string num = Util.Mid(rawString, keystring, endKey);
 			return num;
 		}
 
@@ -37,7 +37,7 @@ namespace StockFilter
 
 		protected override string GetWebPageTableString(string rawString)
 		{						
-			string list = Mid(rawString, listbegin, listend);
+			string list = Util.Mid(rawString, listbegin, listend);
 			return list;
 		}
 

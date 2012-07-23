@@ -7,9 +7,14 @@ namespace StockFilter
 		public WebStockDetail()
 		{
 		}
+
 	
-	
-	
+	}//class
+
+
+	public class WebStockDetail_YAHOO
+	{
+
 	}//class
 }//namespace
 

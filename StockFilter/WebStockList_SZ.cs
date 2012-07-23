@@ -28,7 +28,7 @@ namespace StockFilter
 		protected override string ParseMaxPage(string rawString)
 		{
 			//found the max page info:
-			string num = Mid(rawString, keystring, endKey);
+			string num = Util.Mid(rawString, keystring, endKey);
 			return num;
 		}
 
@@ -49,7 +49,7 @@ namespace StockFilter
 
 		protected override string GetWebPageTableString(string rawString)
 		{
-			string list = Mid(rawString, listbegin, listend);
+			string list = Util.Mid(rawString, listbegin, listend);
 			return list;
 		}
 
@@ -78,7 +78,7 @@ namespace StockFilter
 
 			//code
 			int pos_after_end;
-			string strCode = Mid(list, curpos, codeBegin, codeEnd, out pos_after_end);
+			string strCode = Util.Mid(list, curpos, codeBegin, codeEnd, out pos_after_end);
 			if (pos_after_end < 0)
 				RecordOne_Throw(-2, list, curpos);
 
@@ -95,7 +95,7 @@ namespace StockFilter
 
 
 			//shorten market name
-			string strName = Mid(list, curpos, shortBegin, shortEnd, out pos_after_end);
+			string strName = Util.Mid(list, curpos, shortBegin, shortEnd, out pos_after_end);
 			if (pos_after_end < 0)
 				RecordOne_Throw(nCode, list, curpos);
 
