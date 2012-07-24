@@ -12,8 +12,8 @@ namespace StockFilter
 		protected override string GetMarketName(){ return "SH";}
 		protected override int EntriesPerPage(){return 50;}
 
-		static string keystring = "页/共<strong>";
-		static string endKey = "</strong>页";
+		private static string keystring = "页/共<strong>";
+		private static string endKey = "</strong>页";
 		protected override string ParseMaxPage(string rawString)
 		{
 			//found the max page info:
@@ -32,8 +32,8 @@ namespace StockFilter
 			return url;
 		}
 
-		static string listbegin = @"证券简称</td>";
-		static string listend = @"页/共<strong>";
+		private static string listbegin = @"证券简称</td>";
+		private static string listend = @"页/共<strong>";
 
 		protected override string GetWebPageTableString(string rawString)
 		{						
@@ -42,7 +42,7 @@ namespace StockFilter
 		}
 
 
-		static string codeBegin = "COMPANY_CODE=";
+		private static string codeBegin = "COMPANY_CODE=";
 
 		protected override int RecordOne(string list, int curpos, out information info)
 		{

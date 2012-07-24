@@ -48,7 +48,7 @@ namespace StockFilter
 		public void LoadHistory()
 		{
 			UpdateHistory();
-			Data.share().LoadQuoteDetail(this);
+			Data.Static.LoadQuoteDetail(this);
 		}
 
 		/// <summary>
@@ -65,12 +65,12 @@ namespace StockFilter
 		private void UpdateHistory()
 		{
 			_history = new Dictionary<long, dateData>();
-			Data.share().UpdateDetail(this);
+			Data.Static.UpdateDetail(this);
 		}
 
 		public void SaveInformation()
 		{
-			Data.share().SaveQuoteInformation(this);
+			Data.Static.SaveQuoteInformation(this);
 		}
 
 	}//class 

@@ -12,7 +12,8 @@ namespace StockFilter
 	{
 		public void CalcAllQuotes(CalcQuote cq)
 		{
-			foreach(var q in _allQuote){
+			LoadInformation();
+			foreach (var q in _allQuote) {
 				q.Value.LoadHistory();
 				cq(q.Value);
 				q.Value.UnloadHistory();
@@ -29,10 +30,13 @@ namespace StockFilter
 		{
 
 		}
-		static private QuoteManager _this = new QuoteManager();
-		static public QuoteManager share()
-		{
-			return _this;
+
+		private static QuoteManager _this = new QuoteManager();
+
+		public static QuoteManager Static {
+			get {
+				return _this;
+			}
 		}
 
 		/// <summary>
@@ -40,8 +44,9 @@ namespace StockFilter
 		/// </summary>
 		public void LoadInformation()
 		{
-			List<Quote> Qlist = Data.share().LoadAllQuotesInfomation();
-			foreach(Quote q in Qlist){
+			var qqq = Data.Test();
+			List<Quote> Qlist = Data.Static.LoadAllQuotesInfomation();
+			foreach (Quote q in Qlist) {
 				_allQuote.Add(q.CodeInt, q);
 			}
 		}
@@ -51,7 +56,7 @@ namespace StockFilter
 		/// </summary>
 		public void UpdateInformation()
 		{
-			Data.share().UpdateQuotes(SaveQuote);
+			Data.Static.UpdateQuotes(SaveQuote);
 		}
 
 		/// <summary>
@@ -61,7 +66,8 @@ namespace StockFilter
 
 		private void SaveQuote(Quote q)
 		{
-			if(_allQuote.ContainsKey(q.CodeInt)) return;
+			if (_allQuote.ContainsKey(q.CodeInt))
+				return;
 			_allQuote.Add(q.CodeInt, q);
 		}
 

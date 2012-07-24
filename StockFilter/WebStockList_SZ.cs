@@ -22,8 +22,8 @@ namespace StockFilter
 			return new int[]{2};
 		}
 
-		static string keystring = "当前第1页  共";
-		static string endKey = "页</td>";
+		private static string keystring = "当前第1页  共";
+		private static string endKey = "页</td>";
 
 		protected override string ParseMaxPage(string rawString)
 		{
@@ -44,8 +44,8 @@ namespace StockFilter
 			return url;
 		}
 
-		static string listbegin = @"所属行业";
-		static string listend = @"当前第";
+		private static string listbegin = @"所属行业";
+		private static string listend = @"当前第";
 
 		protected override string GetWebPageTableString(string rawString)
 		{
@@ -53,19 +53,19 @@ namespace StockFilter
 			return list;
 		}
 
-		static string nameKeyPoint1 = "点击查看详细资料";
+		private static string nameKeyPoint1 = "点击查看详细资料";
 
 		//numerical 
-		static string codeBegin = "class='cls-data-td'align='center'>";
-		static string codeEnd = "</td>";
+		private static string codeBegin = "class='cls-data-td'align='center'>";
+		private static string codeEnd = "</td>";
 
 		//name for the company
-		static string nameBegin = ".html\"><u>";
-		static string nameEnd = "</u>";
+		private static string nameBegin = ".html\"><u>";
+		private static string nameEnd = "</u>";
 
 		//short name for A stock market.
-		static string shortBegin = "class='cls-data-td'align='center'>";
-		static string shortEnd = "</td>";
+		private static string shortBegin = "class='cls-data-td'align='center'>";
+		private static string shortEnd = "</td>";
 
 		protected override int RecordOne(string list, int curpos, out information info)
 		{

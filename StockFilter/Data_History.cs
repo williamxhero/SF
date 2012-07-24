@@ -16,13 +16,13 @@ namespace StockFilter
 
 		private void UpdatePeriodDetail(Quote q, ref date dfrm, ref date to)
 		{
-			Output.Log( "update quote " + q.Name +" (desn't have data " + dfrm + " to " + to +")");
+			Output.Log( "update quote " + q.Name +"(" + q.CodeStr +") (desn't have data " + dfrm + " to " + to +")");
 			// @"http://ichart.finance.yahoo.com/table.csv?s=300072.sz");
 		}
 
 		private void UpdateAllDetail(Quote q)
 		{
-			Output.Log( "update quote " + q.Name +" (desn't have histroy records, fetch all historical data).");
+			Output.Log( "update quote " + q.Name +"(" + q.CodeStr +") (desn't have histroy records, fetch all historical data).");
 		}
 
 		public void UpdateDetail(Quote q)
@@ -30,6 +30,7 @@ namespace StockFilter
 			long lastDate = LastData(q);
 			if(lastDate == 0){
 				UpdateAllDetail(q);
+				return;
 			}
 			DateTime now = DateTime.Now.ToLocalTime();
 			long nowDayTimeStamp = Util.GetUnixTimeStamp(now.Year, now.Month, now.Day);
@@ -42,6 +43,8 @@ namespace StockFilter
 
 		private long LastData(Quote q)
 		{
+			if(!TableExist(GetHistoryTableName(q) )) return 0;
+
 			SqliteConnection conn = new SqliteConnection(souce);
 			conn.Open();
 			SqliteCommand cmd = conn.CreateCommand();
@@ -58,6 +61,8 @@ namespace StockFilter
 
 		public void LoadQuoteDetail(Quote q)
 		{
+			if(!TableExist(GetHistoryTableName(q) )) return;
+
 			SqliteConnection conn = new SqliteConnection(souce);
 			conn.Open();
 			SqliteCommand cmd = conn.CreateCommand();

@@ -13,9 +13,9 @@ namespace StockFilter
 	/// </summary>
 	public class WebUtil
 	{
-		static WebUtil _util = new WebUtil();
+		private static WebUtil _util = new WebUtil();
 
-		static public WebUtil Share()
+		public static WebUtil Share()
 		{
 			return _util;
 		}

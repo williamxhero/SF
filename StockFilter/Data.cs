@@ -11,10 +11,10 @@ namespace StockFilter
 	public partial class Data
 	{
 		private static Data _this = new Data();
-
-		public static Data share()
-		{
-			return _this;
+		public static Data Static {
+			get {
+				return _this;
+			}
 		}
 	};
 

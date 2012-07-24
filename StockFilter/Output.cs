@@ -9,7 +9,7 @@ namespace StockFilter
 		{
 		}
 
-		static public void Log(string str)
+		public static void Log(string str)
 		{
 			Console.WriteLine(str);
 		}

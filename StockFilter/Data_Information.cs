@@ -10,7 +10,7 @@ namespace StockFilter
 	/// </summary>
 	public partial class Data
 	{		
-		private string TableNameInfo = "stock_info";
+		private static string TableNameInfo = "stock_info";
 
 		/// <summary>
 		/// Will replace the old entry.
@@ -41,6 +41,12 @@ namespace StockFilter
 				parser.GetAllQuotesInfomation(oqu);
 
 			}
+		}
+
+		public static List<Quote> Test()
+		{
+			List<Quote> allQ = new List<Quote>();
+			return new List<Quote>();
 		}
 
 		/// <summary>
