@@ -1,6 +1,4 @@
 bin/
-bin\
 *.suo
 *.userprefs
-SqliteQuery/
-SqliteQuery\
+SqliteQuery.app/
