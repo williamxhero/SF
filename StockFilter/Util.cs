@@ -36,9 +36,41 @@ namespace StockFilter
 			return sb.ToString();
 		}
 
+		/// <summary>
+		/// Strings to date.
+		/// </summary>
+		/// <returns>
+		/// the date.
+		/// </returns>
+		/// <param name='dt_str'>
+		/// Dt_str.  format must be "YYYY-MM-DD"
+		/// </param>
+		public static date StringToDate(string dt_str)
+		{
+			string[] vals = dt_str.Split("-_.".ToCharArray());
+			if(vals.Length < 3) throw new ArgumentException("StringToDate() argument format must be \"YYYY-MM-DD\"");
+			date dt;
+			int.TryParse(vals[0], out dt.year);
+			int.TryParse(vals[1], out dt.month);
+			int.TryParse(vals[2], out dt.day);
+			return dt;
+		}
+
+		public static long GetUnixTimeStamp(string date_str)
+		{
+			return GetUnixTimeStamp(StringToDate(date_str));
+		}
+
+		public static long GetUnixTimeStamp(date dt)
+		{
+			return GetUnixTimeStamp(dt.year, dt.month, dt.day);
+		}
+
+		static DateTime epoch = new DateTime(1970, 1, 1).ToLocalTime();
+
 		public static long GetUnixTimeStamp(int year, int month, int day)
 		{
-			DateTime epoch = new DateTime(1970, 1, 1).ToLocalTime();
+			//DateTime epoch = new DateTime(1970, 1, 1).ToLocalTime();
 			DateTime theDate = new DateTime(year, month, day).ToLocalTime();
 			TimeSpan span = theDate - epoch;
 			return (long)span.TotalSeconds;
@@ -46,7 +78,7 @@ namespace StockFilter
 
 		public static date GetDate(long unixTimeStamp)
 		{
-   			DateTime epoch = new DateTime(1970, 1, 1).ToLocalTime();
+   			//DateTime epoch = new DateTime(1970, 1, 1).ToLocalTime();
    			DateTime t = epoch.AddSeconds(unixTimeStamp);
 			date dt;
 			dt.year = t.Year;

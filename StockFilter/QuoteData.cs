@@ -66,7 +66,7 @@ namespace StockFilter
 
 	public struct indicator
 	{
-		public float _volume;
+		public long _volume;
 	}//indicator
 
 	public struct dateData

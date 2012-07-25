@@ -44,10 +44,12 @@ namespace StockFilter
 		/// </summary>
 		public void LoadInformation()
 		{
-			var qqq = Data.Test();
 			List<Quote> Qlist = Data.Static.LoadAllQuotesInfomation();
+			int i  =0;
 			foreach (Quote q in Qlist) {
+				if(i > 0) break;
 				_allQuote.Add(q.CodeInt, q);
+				i++;
 			}
 		}
 

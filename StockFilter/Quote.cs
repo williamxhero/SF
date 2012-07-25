@@ -14,23 +14,27 @@ namespace StockFilter
 		public void OverrideDateData(dateData dd)
 		{
 			//long timeStamp = Util.GetUnixTimeStamp(dd._date.year, dd._date.month, dd._date.day);
-			_history[dd._date] = dd;
+			_history [dd._date] = dd;
 		}
 
-		public string CodeStr{
-			get{return _info._code.ToString("D6");}
+		public Dictionary<long, dateData> History {
+			get{ return _history;}
 		}
 
-		public int CodeInt{
-			get{return _info._code;}
+		public string CodeStr {
+			get{ return _info._code.ToString("D6");}
 		}
 
-		public string Name{
-			get{return _info._name;}
+		public int CodeInt {
+			get{ return _info._code;}
 		}
 
-		public market market{
-			get{return _info._market;}
+		public string Name {
+			get{ return _info._name;}
+		}
+
+		public market market {
+			get{ return _info._market;}
 		}
 
 		public Quote()
@@ -56,7 +60,7 @@ namespace StockFilter
 		/// </summary>
 		public void UnloadHistory()
 		{
-			if(_history != null){
+			if (_history != null) {
 				_history.Clear();
 				_history = null;
 			}
@@ -66,11 +70,24 @@ namespace StockFilter
 		{
 			_history = new Dictionary<long, dateData>();
 			Data.Static.UpdateDetail(this);
+			SaveDetail();
 		}
 
 		public void SaveInformation()
 		{
 			Data.Static.SaveQuoteInformation(this);
+		}
+
+		public void SaveDetail()
+		{
+			Data.Static.SaveQuoteDetail(this);
+		}
+
+		public void SetDetail(List<dateData> dataList)
+		{
+			foreach(var dd in dataList){
+				OverrideDateData(dd);
+			}
 		}
 
 	}//class 

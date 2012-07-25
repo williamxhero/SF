@@ -15,6 +15,8 @@ namespace StockFilter
 		private void CalcQuote_MA(Quote q)
 		{
 			Output.Log("calculate MA trend of " + q.Name);
+
+
 		}
 
 		public void CalcMA()

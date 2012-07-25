@@ -9,7 +9,10 @@ public partial class MainWindow
 	private global::Gtk.VBox vbox1;
 	private global::Gtk.MenuBar menubar1;
 	private global::Gtk.ScrolledWindow GtkScrolledWindow;
-	private global::Gtk.TreeView treeview2;
+	private global::Gtk.TreeView TreeView;
+	private global::Gtk.HPaned hpaned1;
+	private global::Gtk.Entry InputAuthor;
+	private global::Gtk.Button AuthorBtn;
 	
 	protected virtual void Build ()
 	{
@@ -47,13 +50,39 @@ public partial class MainWindow
 		this.GtkScrolledWindow.Name = "GtkScrolledWindow";
 		this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
 		// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
-		this.treeview2 = new global::Gtk.TreeView ();
-		this.treeview2.CanFocus = true;
-		this.treeview2.Name = "treeview2";
-		this.GtkScrolledWindow.Add (this.treeview2);
+		this.TreeView = new global::Gtk.TreeView ();
+		this.TreeView.CanFocus = true;
+		this.TreeView.Name = "TreeView";
+		this.GtkScrolledWindow.Add (this.TreeView);
 		this.vbox1.Add (this.GtkScrolledWindow);
 		global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.GtkScrolledWindow]));
 		w4.Position = 1;
+		// Container child vbox1.Gtk.Box+BoxChild
+		this.hpaned1 = new global::Gtk.HPaned ();
+		this.hpaned1.CanFocus = true;
+		this.hpaned1.Name = "hpaned1";
+		this.hpaned1.Position = 667;
+		// Container child hpaned1.Gtk.Paned+PanedChild
+		this.InputAuthor = new global::Gtk.Entry ();
+		this.InputAuthor.CanFocus = true;
+		this.InputAuthor.Name = "InputAuthor";
+		this.InputAuthor.IsEditable = true;
+		this.InputAuthor.InvisibleChar = '●';
+		this.hpaned1.Add (this.InputAuthor);
+		global::Gtk.Paned.PanedChild w5 = ((global::Gtk.Paned.PanedChild)(this.hpaned1 [this.InputAuthor]));
+		w5.Resize = false;
+		// Container child hpaned1.Gtk.Paned+PanedChild
+		this.AuthorBtn = new global::Gtk.Button ();
+		this.AuthorBtn.CanFocus = true;
+		this.AuthorBtn.Name = "AuthorBtn";
+		this.AuthorBtn.UseUnderline = true;
+		this.AuthorBtn.Label = global::Mono.Unix.Catalog.GetString ("Author");
+		this.hpaned1.Add (this.AuthorBtn);
+		this.vbox1.Add (this.hpaned1);
+		global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hpaned1]));
+		w7.Position = 2;
+		w7.Expand = false;
+		w7.Fill = false;
 		this.Add (this.vbox1);
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();
@@ -63,5 +92,6 @@ public partial class MainWindow
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
 		this.refreshAction.Activated += new global::System.EventHandler (this.FetchFromNet);
+		this.AuthorBtn.Clicked += new global::System.EventHandler (this.AuthorClicked);
 	}
 }

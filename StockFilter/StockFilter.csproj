@@ -46,6 +46,18 @@
     <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="System.Web" />
     <Reference Include="Mono.Data.Sqlite" />
+    <Reference Include="Google.GData.Client">
+      <HintPath>Google.GData.Extensions\Google.GData.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.GData.Extensions">
+      <HintPath>Google.GData.Extensions\Google.GData.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Google.GData.Extensions\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.GData.Spreadsheets">
+      <HintPath>Google.GData.Extensions\Google.GData.Spreadsheets.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -73,6 +85,8 @@
     <Compile Include="QuoteManager.cs" />
     <Compile Include="QuoteData.cs" />
     <Compile Include="Calculator.cs" />
+    <Compile Include="WebStockDetail_YAHOO.cs" />
+    <Compile Include="WebStockDetail_GOOG.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

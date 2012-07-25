@@ -12,14 +12,8 @@ namespace StockFilter
 		protected override string GetMarketName(){ return "SH";}
 		protected override int EntriesPerPage(){return 50;}
 
-		private static string keystring = "页/共<strong>";
-		private static string endKey = "</strong>页";
-		protected override string ParseMaxPage(string rawString)
-		{
-			//found the max page info:
-			string num = Util.Mid(rawString, keystring, endKey);
-			return num;
-		}
+		protected override string GetMaxPgBegin(){return @"页/共<strong>";}
+		protected override string GetMaxPgEnd(){return @"</strong>页";}
 
 		protected override int GetWebPageIndex(int pg){
 			int begin_index = (pg - 1) * 50 + 1;
@@ -32,22 +26,13 @@ namespace StockFilter
 			return url;
 		}
 
-		private static string listbegin = @"证券简称</td>";
-		private static string listend = @"页/共<strong>";
-
-		protected override string GetWebPageTableString(string rawString)
-		{						
-			string list = Util.Mid(rawString, listbegin, listend);
-			return list;
-		}
-
+		protected override string GetContentBegin(){return @"证券简称</td>";}
+		protected override string GetContentEnd(){return @"页/共<strong>";}
 
 		private static string codeBegin = "COMPANY_CODE=";
 
-		protected override int RecordOne(string list, int curpos, out information info)
+		protected override int RecordOne(string list, int curpos, ref information info)
 		{
-			info = information.EMPTY;
-
 			//code
 			int code_pos = list.IndexOf(codeBegin, curpos);
 			if (code_pos < 0){
@@ -88,6 +73,17 @@ namespace StockFilter
 			info._name = strName;
 
 			return curpos;
+		}
+
+		private static bool szzs_added = false;
+		private void AddSZZS()
+		{
+			if(szzs_added) return;
+			information info;
+			info._code = 000001;
+			info._market._value = market.type.ShangHai;
+			info._name = "上证指数";
+			SaveInfomation(info);
 		}
 
 	}//class

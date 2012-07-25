@@ -16,21 +16,14 @@ namespace StockFilter
 			return 10;
 		}
 
-		protected override int[] GetClass()
+		protected override int[] GetClass(string rawstring)
 		{
 			//2 :  A quotes    ( 2 includes  ->    5 : small/middle companies   6 : venture  }
 			return new int[]{2};
 		}
 
-		private static string keystring = "当前第1页  共";
-		private static string endKey = "页</td>";
-
-		protected override string ParseMaxPage(string rawString)
-		{
-			//found the max page info:
-			string num = Util.Mid(rawString, keystring, endKey);
-			return num;
-		}
+		protected virtual string GetMaxPgBegin(){return @"当前第1页  共";}
+		protected virtual string GetMaxPgEnd(){return @"页</td>";}
 
 		protected override int GetWebPageIndex(int pg)
 		{
@@ -44,14 +37,9 @@ namespace StockFilter
 			return url;
 		}
 
-		private static string listbegin = @"所属行业";
-		private static string listend = @"当前第";
 
-		protected override string GetWebPageTableString(string rawString)
-		{
-			string list = Util.Mid(rawString, listbegin, listend);
-			return list;
-		}
+		protected virtual string GetContentBegin(){return @"所属行业";}
+		protected virtual string GetContentEnd(){return @"当前第";}
 
 		private static string nameKeyPoint1 = "点击查看详细资料";
 
@@ -67,10 +55,8 @@ namespace StockFilter
 		private static string shortBegin = "class='cls-data-td'align='center'>";
 		private static string shortEnd = "</td>";
 
-		protected override int RecordOne(string list, int curpos, out information info)
+		protected override int RecordOne(string list, int curpos, ref information info)
 		{
-			info = information.EMPTY;
-
 			int keypoint = list.IndexOf(nameKeyPoint1, curpos);
 			if (keypoint < 0) 
 				return -1; //no more code;

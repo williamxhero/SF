@@ -17,8 +17,9 @@ namespace StockFilter
 
 		public void GetAllQuotesInfomation(OnQuoteUpdated oqu)
 		{
+			rawString = ReadPageRaw(1, 1);
 			_callback = oqu;
-			int[] cids = GetClass();
+			int[] cids = GetClass(rawString);
 			foreach (int cid in cids) {
 				pageNum = 0;
 				rawString = "";
@@ -27,7 +28,7 @@ namespace StockFilter
 			Data.Static.Vaccum();
 		}
 
-		private void SaveInfomation(information info)
+		protected void SaveInfomation(information info)
 		{
 			Quote q = new Quote(info);
 			q.SaveInformation();
@@ -36,7 +37,9 @@ namespace StockFilter
 
 		private int ReadPageCount(int cid)
 		{
-			rawString = ReadPageRaw(cid, 1);
+			if(cid > 1){
+				rawString = ReadPageRaw(cid, 1);
+			}
 			string pg = ParseMaxPage(rawString);
 			int pageNum;
 			if (! int.TryParse(pg, out pageNum)) {
@@ -66,15 +69,12 @@ namespace StockFilter
 			throw new FormatException("code(" + code + ") web format error. current string pos : " + list.Substring(curpos, 128));
 		}
 
-		protected virtual int[] GetClass()
+		protected virtual int[] GetClass(string rawString)
 		{
 			return new int[]{0};
 		}
 
-		protected virtual string ParseMaxPage(string rawString)
-		{
-			return "0";
-		}
+
 
 		protected virtual int GetWebPageIndex(int pg)
 		{
@@ -86,14 +86,8 @@ namespace StockFilter
 			return "";
 		}
 
-		protected virtual string GetWebPageTableString(string rawString)
+		protected virtual int RecordOne(string list, int curpos, ref information info)
 		{
-			return "";
-		}
-
-		protected virtual int RecordOne(string list, int curpos, out information info)
-		{
-			info = information.EMPTY;
 			return 0;
 		}
 
@@ -105,6 +99,24 @@ namespace StockFilter
 		protected virtual int EntriesPerPage()
 		{
 			return 0;
+		}
+
+		protected virtual string GetContentBegin(){return "";}
+		protected virtual string GetContentEnd(){return "";}
+		protected virtual string GetMaxPgBegin(){return "";}
+		protected virtual string GetMaxPgEnd(){return "";}
+
+		protected string GetWebPageTableString(string rawString)
+		{
+			string content = Util.Mid(rawString, GetContentBegin(), GetContentEnd());
+			return content;
+		}
+
+		protected string ParseMaxPage(string rawString)
+		{
+			//found the max page info:
+			string num = Util.Mid(rawString, GetMaxPgBegin(), GetMaxPgEnd());
+			return num;
 		}
 
 		private void ReadPageWithRetry(int cid, int pg)
@@ -121,7 +133,7 @@ namespace StockFilter
 		private string ReadPageRaw(int cid, int begin_index)
 		{
 			string url = GetWebPageURL(cid, begin_index);
-			return WebUtil.Share().FetchWebPage(url);			
+			return WebUtil.Static.FetchWebPage(url);			
 		}
 
 		private void ReadPage(int cid, int pg)
@@ -143,14 +155,10 @@ namespace StockFilter
 			int entriesNum = EntriesPerPage();
 			//found each quote info:
 			for (int i = 0; i< entriesNum; i++) {
-				information info;
-				curpos = RecordOne(list, curpos, out info);
+				information info = information.EMPTY;
+				curpos = RecordOne(list, curpos, ref info);
 				if (curpos == -1) {
-					if (pg < pageNum) {
-						throw new FormatException("format error : class(" + cid + ")page(" + pg + ") only have " + i + "/" + entriesNum + " entries");
-					} else {
-						break;
-					}
+					break;
 				}
 				SaveInfomation(info);
 			}

@@ -11,7 +11,6 @@ public partial class MainWindow: Gtk.Window
 		Build();
 		Calculator.Static.CalcMA();
 		//QuoteManager.Static.LoadInformation();
-
 	}
 	
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
@@ -23,6 +22,10 @@ public partial class MainWindow: Gtk.Window
 	protected void FetchFromNet(object sender, EventArgs e)
 	{
 
+	}	protected void AuthorClicked(object sender, EventArgs e)
+	{
+		throw new System.NotImplementedException();
 	}
+
 
 }

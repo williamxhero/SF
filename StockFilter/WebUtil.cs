@@ -14,10 +14,11 @@ namespace StockFilter
 	public class WebUtil
 	{
 		private static WebUtil _util = new WebUtil();
-
-		public static WebUtil Share()
-		{
-			return _util;
+		private WebUtil(){}
+		public static WebUtil Static {
+			get {
+				return _util;
+			}
 		}
 
 		private void ShowMsg(String str)

@@ -10,40 +10,68 @@ namespace StockFilter
 	/// </summary>
 	public partial class Data
 	{
-		private string GetHistoryTableName(Quote q){
+		//WebStockDetail pWSD = new WebStockDetail_GOOG();
+		WebStockDetail pWSD = new WebStockDetail_YAHOO();
+
+		private string GetHistoryTableName(Quote q)
+		{
 			return "history_" + q.CodeStr + "_" + q.market;
 		}
 
 		private void UpdatePeriodDetail(Quote q, ref date dfrm, ref date to)
 		{
-			Output.Log( "update quote " + q.Name +"(" + q.CodeStr +") (desn't have data " + dfrm + " to " + to +")");
-			// @"http://ichart.finance.yahoo.com/table.csv?s=300072.sz");
+			pWSD.FetchData(q, dfrm, to);
 		}
 
 		private void UpdateAllDetail(Quote q)
 		{
-			Output.Log( "update quote " + q.Name +"(" + q.CodeStr +") (desn't have histroy records, fetch all historical data).");
+			pWSD.FetchDataAllDates(q);
 		}
 
 		public void UpdateDetail(Quote q)
 		{
 			long lastDate = LastData(q);
-			if(lastDate == 0){
+			if (lastDate == 0) {
 				UpdateAllDetail(q);
 				return;
 			}
 			DateTime now = DateTime.Now.ToLocalTime();
 			long nowDayTimeStamp = Util.GetUnixTimeStamp(now.Year, now.Month, now.Day);
-			if(nowDayTimeStamp > lastDate){
+			if (nowDayTimeStamp > lastDate) {
 				date dFrom = Util.GetDate(lastDate);
 				date dTo = Util.GetDate(nowDayTimeStamp);
 				UpdatePeriodDetail(q, ref dFrom, ref dTo);
 			}
 		}
 
+		public void SaveQuoteDetail(Quote q)
+		{
+			CreateDBHistory(q);
+			SqliteConnection conn = new SqliteConnection(souce);
+			conn.Open();
+			SqliteCommand cmd = conn.CreateCommand();
+
+			foreach (var pair in q.History) {
+				dateData dt = pair.Value;
+
+				string sql = "insert or replace into " + GetHistoryTableName(q) + " values(" +
+					", " + dt._date + 
+					", " + dt._indic._volume +
+					", " + dt._price._open +
+					", " + dt._price._high +
+					", " + dt._price._low +
+					", " + dt._price._close +
+					");";
+				cmd.CommandText = sql;
+				cmd.ExecuteNonQuery();
+			}
+			conn.Close();
+		}
+
 		private long LastData(Quote q)
 		{
-			if(!TableExist(GetHistoryTableName(q) )) return 0;
+			if (!TableExist(GetHistoryTableName(q)))
+				return 0;
 
 			SqliteConnection conn = new SqliteConnection(souce);
 			conn.Open();
@@ -52,7 +80,7 @@ namespace StockFilter
 			cmd.CommandText = sql;
 			SqliteDataReader rdr = cmd.ExecuteReader();
 			long date = 0;
-			if(rdr.Read()){
+			if (rdr.Read()) {
 				date = rdr.GetInt64(0);
 			}
 			conn.Close();
@@ -61,7 +89,8 @@ namespace StockFilter
 
 		public void LoadQuoteDetail(Quote q)
 		{
-			if(!TableExist(GetHistoryTableName(q) )) return;
+			if (!TableExist(GetHistoryTableName(q)))
+				return;
 
 			SqliteConnection conn = new SqliteConnection(souce);
 			conn.Open();
@@ -71,7 +100,7 @@ namespace StockFilter
 			SqliteDataReader rdr = cmd.ExecuteReader();
 			information info;
 		
-			while(rdr.Read()){
+			while (rdr.Read()) {
 				dateData dd;
 				dd._date = rdr.GetInt64(0);
 				dd._indic._volume = rdr.GetInt64(1);
@@ -89,7 +118,7 @@ namespace StockFilter
 		/// </summary>
 		private void CreateDBHistory(Quote q)
 		{
-			if( !File.Exists(dbfile) ||  !TableExist(GetHistoryTableName(q))){
+			if (!File.Exists(dbfile) || !TableExist(GetHistoryTableName(q))) {
 				DoCreateDBHistory(q);
 			}
 		}
