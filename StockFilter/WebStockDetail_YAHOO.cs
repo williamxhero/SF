@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace StockFilter
 {
@@ -9,7 +10,7 @@ namespace StockFilter
 		{
 		}
 
-		protected override List<dateData> DoFetchData(string  code, date date_from, date date_to)
+		protected override List<dateData> DoGetHistory(string  code, date date_from, date date_to)
 		{
 			string content;
 			if (date_from.year == 0 || date_to.year == 0) {
@@ -27,8 +28,9 @@ namespace StockFilter
 				content = WebUtil.Static.FetchWebPage(URI);
 			}
 
+			File.WriteAllText("code" + code + ".txt", content);
+
 			List<dateData> list = new List<dateData>();
-			dateData dt;
 
 			string[] lines = content.Split("\n".ToCharArray());
 			bool firstTitleLine = true;
@@ -41,6 +43,7 @@ namespace StockFilter
 
 				string[] values = line.Split(",".ToCharArray());
 				if (values.Length >= 5) {
+					dateData dt = new dateData();
 					dt._date = Util.GetUnixTimeStamp(values [0]);
 					dt._price._open = double.Parse(values [1]);
 					dt._price._high = double.Parse(values [2]);

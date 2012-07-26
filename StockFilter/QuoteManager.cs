@@ -44,7 +44,7 @@ namespace StockFilter
 		/// </summary>
 		public void LoadInformation()
 		{
-			List<Quote> Qlist = Data.Static.LoadAllQuotesInfomation();
+			List<Quote> Qlist = DataSource.Static.LoadAllQuotesInfomation();
 			int i  =0;
 			foreach (Quote q in Qlist) {
 				if(i > 0) break;
@@ -58,7 +58,7 @@ namespace StockFilter
 		/// </summary>
 		public void UpdateInformation()
 		{
-			Data.Static.UpdateQuotes(SaveQuote);
+			DataSource.Static.UpdateQuotes(SaveQuote);
 		}
 
 		/// <summary>

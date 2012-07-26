@@ -25,7 +25,7 @@ namespace StockFilter
 				rawString = "";
 				ReadAllPages(cid);
 			}
-			Data.Static.Vaccum();
+			DataSource.Static.Vaccum();
 		}
 
 		protected void SaveInfomation(information info)

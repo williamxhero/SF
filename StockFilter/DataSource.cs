@@ -6,12 +6,13 @@ using Mono.Data.Sqlite;
 namespace StockFilter
 {
 	/// <summary>
-	/// Data. Instance part.
+	/// DataSource communiating with different sources,
+	/// like DB, web, files...
 	/// </summary>
-	public partial class Data
+	public partial class DataSource
 	{
-		private static Data _this = new Data();
-		public static Data Static {
+		private static DataSource _this = new DataSource();
+		public static DataSource Static {
 			get {
 				return _this;
 			}
@@ -19,14 +20,14 @@ namespace StockFilter
 	};
 
 	/// <summary>
-	/// Data. DB basic part.
+	/// DataSource. DB basic part.
 	/// </summary>
-	public partial class Data
+	public partial class DataSource
 	{
 		private static string dbfile;
 		private static string souce;
 
-		private Data()
+		private DataSource()
 		{
 			dbfile = "stocks.db";
 			souce = "Data Source=" + dbfile;
@@ -48,10 +49,24 @@ namespace StockFilter
 			SqliteCommand cmd = conn.CreateCommand();
 			cmd.CommandText = "SELECT name FROM sqlite_master WHERE name='" + tableName + "'";
 			SqliteDataReader rdr = cmd.ExecuteReader();
-			if (rdr.HasRows)
-				return true;
-			else
-				return false;
+			bool hasrow = rdr.HasRows;
+			conn.Close();
+			return hasrow;
+		}
+
+		private long RowNum(String tableName)
+		{
+			SqliteConnection conn = new SqliteConnection(souce);
+			conn.Open();
+			SqliteCommand cmd = conn.CreateCommand();
+			cmd.CommandText = "select count(0) from " + tableName;
+			SqliteDataReader rdr = cmd.ExecuteReader();
+			long cnt = 0;
+			if (rdr.Read()) {
+				cnt = rdr.GetInt64(0);
+			}
+			conn.Close();
+			return cnt;
 		}
 	}//class
 }//namespace

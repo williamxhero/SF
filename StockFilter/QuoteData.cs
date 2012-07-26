@@ -69,11 +69,18 @@ namespace StockFilter
 		public long _volume;
 	}//indicator
 
-	public struct dateData
+	public class dateData : IComparable
 	{
 		public long _date;
 		public price _price;
 		public indicator _indic;
+		public int CompareTo(object obj)
+		{
+			dateData d = (dateData) obj;
+			if(_date < d._date) return -1;
+			if(_date > d._date) return 1;
+			return 0;
+		}
 	}//dateData
 
 }

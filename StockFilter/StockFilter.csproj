@@ -72,21 +72,21 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Quote.cs" />
     <Compile Include="WebUtil.cs" />
-    <Compile Include="Data.cs" />
     <Compile Include="Output.cs" />
     <Compile Include="WebStockList.cs" />
     <Compile Include="WebStockList_SH.cs" />
     <Compile Include="WebStockList_SZ.cs" />
     <Compile Include="WebStockDetail.cs" />
     <Compile Include="WebStockSource.cs" />
-    <Compile Include="Data_Information.cs" />
-    <Compile Include="Data_History.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="QuoteManager.cs" />
     <Compile Include="QuoteData.cs" />
     <Compile Include="Calculator.cs" />
     <Compile Include="WebStockDetail_YAHOO.cs" />
     <Compile Include="WebStockDetail_GOOG.cs" />
+    <Compile Include="DataSource.cs" />
+    <Compile Include="DataSource_Information.cs" />
+    <Compile Include="DataSource_History.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

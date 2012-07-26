@@ -150,7 +150,7 @@ namespace StockFilter
 			//Console.Write(" cnt : " + cellFeed.Entries.Count);
 		}
 
-		protected override List<dateData> DoFetchData(string  code, date date_from, date date_to)
+		protected override List<dateData> DoGetHistory(string  code, date date_from, date date_to)
 		{
 			Login_UsrPwd();
 			ConnectTable();

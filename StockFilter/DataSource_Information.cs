@@ -6,9 +6,9 @@ using Mono.Data.Sqlite;
 namespace StockFilter
 {
 	/// <summary>
-	/// Data. Information part.
+	/// DataSource. Information part.
 	/// </summary>
-	public partial class Data
+	public partial class DataSource
 	{		
 		private static string TableNameInfo = "stock_info";
 
@@ -43,13 +43,7 @@ namespace StockFilter
 			}
 		}
 
-		public static List<Quote> Test()
-		{
-			List<Quote> allQ = new List<Quote>();
-			return new List<Quote>();
-		}
-
-		/// <summary>
+			/// <summary>
 		/// Loads all empty quotes.
 		/// </summary>
 		/// <returns>

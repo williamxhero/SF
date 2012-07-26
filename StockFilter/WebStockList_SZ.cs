@@ -22,8 +22,8 @@ namespace StockFilter
 			return new int[]{2};
 		}
 
-		protected virtual string GetMaxPgBegin(){return @"当前第1页  共";}
-		protected virtual string GetMaxPgEnd(){return @"页</td>";}
+		protected override string GetMaxPgBegin(){return @"当前第1页  共";}
+		protected override string GetMaxPgEnd(){return @"页</td>";}
 
 		protected override int GetWebPageIndex(int pg)
 		{
@@ -38,8 +38,8 @@ namespace StockFilter
 		}
 
 
-		protected virtual string GetContentBegin(){return @"所属行业";}
-		protected virtual string GetContentEnd(){return @"当前第";}
+		protected override string GetContentBegin(){return @"所属行业";}
+		protected override string GetContentEnd(){return @"当前第";}
 
 		private static string nameKeyPoint1 = "点击查看详细资料";
 
@@ -48,8 +48,8 @@ namespace StockFilter
 		private static string codeEnd = "</td>";
 
 		//name for the company
-		private static string nameBegin = ".html\"><u>";
-		private static string nameEnd = "</u>";
+		//private static string nameBegin = ".html\"><u>";
+		//private static string nameEnd = "</u>";
 
 		//short name for A stock market.
 		private static string shortBegin = "class='cls-data-td'align='center'>";

@@ -4,7 +4,7 @@ using StockFilter;
 
 public partial class MainWindow: Gtk.Window
 {	
-	//private StockFilter.Data _dat = new StockFilter.Data();
+	//private StockFilter.DataSource _dat = new StockFilter.DataSource();
 
 	public MainWindow(): base (Gtk.WindowType.Toplevel)
 	{

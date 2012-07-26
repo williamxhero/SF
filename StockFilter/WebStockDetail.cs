@@ -11,24 +11,24 @@ namespace StockFilter
 			_src = src;
 		}
 
-		public void FetchData(Quote q, date date_from, date date_to)
+		public List<dateData> GetHistory(Quote q, date date_from, date date_to)
 		{
 			string code = _src.GetCode(q);
-			DoFetchData(code, date_from, date_to);
+			return DoGetHistory(code, date_from, date_to);
 		}
 
-		public void FetchDataAllDates(Quote q)
+		public List<dateData> GetHistory(Quote q)
 		{
 			date dt;
 			dt.year = 0;
 			dt.month = 0;
 			dt.day = 0;
 			string code = _src.GetCode(q);
-			List<dateData> dataList = DoFetchData(code, dt, dt);
-			q.SetDetail(dataList);
+			List<dateData> dataList = DoGetHistory(code, dt, dt);
+			return dataList;
 		}
 
-		protected virtual List<dateData> DoFetchData(string code, date date_from, date date_to)
+		protected virtual List<dateData> DoGetHistory(string code, date date_from, date date_to)
 		{
 			return new List<dateData>();
 		}

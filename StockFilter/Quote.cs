@@ -1,23 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace StockFilter
 {
 	/// <summary>
 	/// Quote information
 	/// </summary>
-	public class Quote
+	public partial class Quote
 	{
 		private information _info;
-		private Dictionary<long, dateData> _history = null;
+		private List<dateData> _history = null;
 
-		public void OverrideDateData(dateData dd)
-		{
-			//long timeStamp = Util.GetUnixTimeStamp(dd._date.year, dd._date.month, dd._date.day);
-			_history [dd._date] = dd;
-		}
-
-		public Dictionary<long, dateData> History {
+		public List<dateData> History {
 			get{ return _history;}
 		}
 
@@ -37,6 +33,10 @@ namespace StockFilter
 			get{ return _info._market;}
 		}
 
+		public string Describe {
+			get{ return Name + "(" + CodeStr + ")";}
+		}
+
 		public Quote()
 		{
 		}
@@ -46,15 +46,34 @@ namespace StockFilter
 			_info = info;
 		}
 
+		public long LastDate {
+			get {
+				if (_history == null || _history.Count == 0) {
+					return 0;
+				}
+				return _history [_history.Count - 1]._date;
+			}
+		}
+
+		private void SortHistory()
+		{
+			if (_history != null) {
+				_history.Sort();
+			}
+		}
+	}//class
+
+	public partial class Quote
+	{
 		/// <summary>
 		/// too much data need to load/unload _history dynamiclly
 		/// </summary>
 		public void LoadHistory()
 		{
+			_history = DataSource.Static.LoadHistory_DB(this);
 			UpdateHistory();
-			Data.Static.LoadQuoteDetail(this);
 		}
-
+		
 		/// <summary>
 		/// too much data need to load/unload _history dynamiclly
 		/// </summary>
@@ -68,28 +87,51 @@ namespace StockFilter
 
 		private void UpdateHistory()
 		{
-			_history = new Dictionary<long, dateData>();
-			Data.Static.UpdateDetail(this);
-			SaveDetail();
-		}
+			SortHistory();
+			List<dateData> newData = DataSource.Static.GetHistory_Web(this);
+			newData.Sort();
 
+			//WriteListToFile("list_from_web.txt", newData);
+			_history.AddRange(newData);
+			DataSource.Static.SaveHistory_DB(this);
+
+			//load after save to check to correctness of DB.
+			//newData = DataSource.Static.LoadHistory_DB(this);
+			//WriteListToFile("list_from_DB.txt", newData);
+		}
+	}//class
+
+	public partial class Quote
+	{
 		public void SaveInformation()
 		{
-			Data.Static.SaveQuoteInformation(this);
+			DataSource.Static.SaveQuoteInformation(this);
 		}
+	}//class
 
-		public void SaveDetail()
+	//TEST
+	public partial class Quote
+	{
+		//save data to file in the format just as web-source
+		//and use merge tool to compare.
+		private void WriteListToFile(string file, List<dateData> list)
 		{
-			Data.Static.SaveQuoteDetail(this);
-		}
+			StringBuilder sb = new StringBuilder();
+			foreach (dateData dd in list) {
 
-		public void SetDetail(List<dateData> dataList)
-		{
-			foreach(var dd in dataList){
-				OverrideDateData(dd);
+				sb.AppendLine(
+				                 Util.GetDate(dd._date) + "," +
+					dd._price._open.ToString() +"," +
+					dd._price._high.ToString() +"," +
+					dd._price._low +"," +
+					dd._price._close + "," +
+					dd._indic._volume
+				);
 			}
-		}
 
+			string content = sb.ToString();
+			File.WriteAllText(file, content);
+		}
 	}//class 
 
 }
