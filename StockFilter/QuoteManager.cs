@@ -6,17 +6,15 @@ namespace StockFilter
 	public delegate void CalcQuote(Quote q);
 
 	/// <summary>
-	/// Quote manager. Quotes Detail part.
+	/// Quote manager.
 	/// </summary>
 	public partial class QuoteManager
 	{
-		public void CalcAllQuotes(CalcQuote cq)
-		{
-			LoadInformation();
-			foreach (var q in _allQuote) {
-				q.Value.LoadHistory();
-				cq(q.Value);
-				q.Value.UnloadHistory();
+		private QuoteManager()	{	}
+		private static QuoteManager _this = new QuoteManager();
+		public static QuoteManager Static {
+			get {
+				return _this;
 			}
 		}
 	}//class
@@ -26,28 +24,21 @@ namespace StockFilter
 	/// </summary>
 	public partial class QuoteManager
 	{
-		private QuoteManager()
-		{
-
-		}
-
-		private static QuoteManager _this = new QuoteManager();
-
-		public static QuoteManager Static {
-			get {
-				return _this;
-			}
-		}
+		/// <summary>
+		/// code to quota information
+		/// </summary>
+		private Dictionary<int, Quote> _allQuote = new Dictionary<int, Quote>();
 
 		/// <summary>
 		/// load from desk
 		/// </summary>
 		public void LoadInformation()
 		{
-			List<Quote> Qlist = DataSource.Static.LoadAllQuotesInfomation();
-			int i  =0;
+			_allQuote.Clear();
+			List<Quote> Qlist = DataSource.Static.LoadQuotesInfo_DB();
+			int i  = 0;
 			foreach (Quote q in Qlist) {
-				if(i > 0) break;
+				//if(i > 100) break;
 				_allQuote.Add(q.CodeInt, q);
 				i++;
 			}
@@ -56,17 +47,30 @@ namespace StockFilter
 		/// <summary>
 		/// fetch from net. add new quotes into database
 		/// </summary>
-		public void UpdateInformation()
+		public void UpdateQuotesInformation()
 		{
-			DataSource.Static.UpdateQuotes(SaveQuote);
+			DataSource.Static.GetQuoteInfo_Web(KeepQuote);
+			SaveAllQuotesInfo();
 		}
 
-		/// <summary>
-		/// code to quota information
-		/// </summary>
-		private Dictionary<int, Quote> _allQuote = new Dictionary<int, Quote>();
+		public void CalcAllQuotes(CalcQuote cq)
+		{
+			LoadInformation();
+			foreach (var q in _allQuote) {
+				q.Value.LoadHistory();
+				if(cq != null) cq(q.Value);
+				q.Value.UnloadHistory();
+			}
+		}
 
-		private void SaveQuote(Quote q)
+		private void SaveAllQuotesInfo()
+		{
+			foreach (var q in _allQuote) {
+				DataSource.Static.SaveQuoteInfo_DB(q.Value);
+			}
+		}
+
+		private void KeepQuote(Quote q)
 		{
 			if (_allQuote.ContainsKey(q.CodeInt))
 				return;

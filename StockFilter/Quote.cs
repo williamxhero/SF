@@ -71,6 +71,9 @@ namespace StockFilter
 		public void LoadHistory()
 		{
 			_history = DataSource.Static.LoadHistory_DB(this);
+			if(_history.Count == 0) {
+				Output.Log( Describe + " history is empty");
+			}
 			UpdateHistory();
 		}
 		
@@ -89,12 +92,15 @@ namespace StockFilter
 		{
 			SortHistory();
 			List<dateData> newData = DataSource.Static.GetHistory_Web(this);
-			newData.Sort();
+			if (newData.Count > 0) {
+				newData.Sort();
 
-			//WriteListToFile("list_from_web.txt", newData);
-			_history.AddRange(newData);
-			DataSource.Static.SaveHistory_DB(this);
-
+				WriteListToFile("list_from_web.txt", newData);
+				_history.AddRange(newData);
+				DataSource.Static.SaveHistory_DB(this);
+			}else{
+				Output.Log("didn't get new data of (" + Describe + ") from web");
+			}
 			//load after save to check to correctness of DB.
 			//newData = DataSource.Static.LoadHistory_DB(this);
 			//WriteListToFile("list_from_DB.txt", newData);
@@ -105,9 +111,10 @@ namespace StockFilter
 	{
 		public void SaveInformation()
 		{
-			DataSource.Static.SaveQuoteInformation(this);
+			DataSource.Static.SaveQuoteInfo_DB(this);
 		}
 	}//class
+
 
 	//TEST
 	public partial class Quote
@@ -121,9 +128,9 @@ namespace StockFilter
 
 				sb.AppendLine(
 				                 Util.GetDate(dd._date) + "," +
-					dd._price._open.ToString() +"," +
-					dd._price._high.ToString() +"," +
-					dd._price._low +"," +
+					dd._price._open.ToString() + "," +
+					dd._price._high.ToString() + "," +
+					dd._price._low + "," +
 					dd._price._close + "," +
 					dd._indic._volume
 				);

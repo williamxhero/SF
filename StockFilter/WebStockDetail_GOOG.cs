@@ -9,7 +9,9 @@ namespace StockFilter
 	{
 		private static SpreadsheetsService service = null;
 
-		public WebStockDetail_GOOG() : base(new source_GOOG()) {}
+		public WebStockDetail_GOOG() : base(new source_GOOG())
+		{
+		}
 
 		private void Login_OAuth2()
 		{
@@ -139,36 +141,59 @@ namespace StockFilter
 			return cellFeed;
 		}
 
-		private void SetCell(string code)
+		private void SetCell(string code, date date_from, date date_to)
 		{
 			// Fetch the cell feed of the worksheet.
 			CellQuery cellQuery = new CellQuery(worksheet.CellFeedLink);
 			CellFeed cellFeed = service.Query(cellQuery);
 			CellEntry cell1st = (CellEntry)cellFeed.Entries [0];
-			cell1st.InputValue = "=GoogleFinance(\"" + code + "\", \"ALL\", \"2012-7-1\", \"2012-7-25\", \"DAILY\")";
+			cell1st.InputValue = "=GoogleFinance(\"" 
+				+ code + "\", \"ALL\", \"" 
+				+ date_from.ToString() + "\", \"" 
+				+ date_to.ToString() 
+				+ "\", \"DAILY\")";
 			cell1st.Update();
+			Output.Log("Get From Google sheet " + cell1st.InputValue);
 			//Console.Write(" cnt : " + cellFeed.Entries.Count);
 		}
 
-		protected override List<dateData> DoGetHistory(string  code, date date_from, date date_to)
+		protected override List<dateData> DoGetHistory(string  code4src, date date_from, date date_to)
 		{
 			Login_UsrPwd();
 			ConnectTable();
+			List<dateData> list = new List<dateData>();
 
-			SetCell("600006.ss");
+			try {
+				SetCell(code4src, date_from, date_to);
+				ListFeed listFeed = GetList();
 
-			ListFeed listFeed = GetList();
-			foreach (ListEntry row in listFeed.Entries) {
-				string time = row.Elements [0].Value;
-				string open = row.Elements [1].Value;
-				string close = row.Elements [2].Value;
-				string high = row.Elements [3].Value;
-				string low = row.Elements [4].Value;
-				string vol = row.Elements [5].Value;
-				Console.WriteLine(time + "|" + open +"|" + close +"|" + high +"|" + low+"|" +vol);
+				foreach (ListEntry row in listFeed.Entries) {
+					string time = row.Elements [0].Value;
+					string open = row.Elements [1].Value;
+					string close = row.Elements [2].Value;
+					string high = row.Elements [3].Value;
+					string low = row.Elements [4].Value;
+					string vol = row.Elements [5].Value;
+
+					Console.WriteLine(code4src + "|" + time + "|" + open + "|" + close + "|" + high + "|" + low + "|" + vol);
+
+					dateData dd = new dateData();
+					string[] date_time = time.Split(" ".ToCharArray());
+					dd._date = Util.GetUnixTimeStamp(date_time[0]);
+					dd._indic._volume = long.Parse(vol);
+					dd._price._open = double.Parse(open);
+					dd._price._high = double.Parse(high);
+					dd._price._low = double.Parse(low);
+					dd._price._close = double.Parse(close);
+					list.Add(dd);
+				}
+
+				Output.Log("YAHOO get history " + code4src + " from : " + date_from + " to : " + date_to);
+			}catch (Exception e) {
+				Output.LogException("get From Google failed : " + code4src + " " + date_from + " - " + date_to + " msg : " + e.Message);
 			}
 
-			return new List<dateData>();
+			return list;
 		}//function
 
 

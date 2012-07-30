@@ -13,6 +13,11 @@ namespace StockFilter
 		{
 			Console.WriteLine(str);
 		}
+
+		public static void LogException(string str)
+		{
+			Console.WriteLine(str);
+		}
 	}
 }
 

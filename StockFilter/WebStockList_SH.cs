@@ -79,6 +79,8 @@ namespace StockFilter
 		private void AddSZZS()
 		{
 			if(szzs_added) return;
+			szzs_added = true;
+
 			information info;
 			info._code = 000001;
 			info._market._value = market.type.ShangHai;

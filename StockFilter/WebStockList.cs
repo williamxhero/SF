@@ -126,7 +126,7 @@ namespace StockFilter
 			} catch (FormatException e) {
 				ReadPage_Retry(cid, pg, e.Message);
 			} catch (Exception e) {
-				Output.Log("general error : " + e.Message + ". move to next page");
+				Output.LogException("general error : " + e.Message + ". move to next page");
 			}
 		}
 		
@@ -171,9 +171,9 @@ namespace StockFilter
 				ReadPage(cid, pg);
 				Output.Log("Now it's ok");
 			} catch (FormatException e2) {
-				Output.Log("still has format error. stop trying, move to next page. (" + e2.Message + ").");
+				Output.LogException("still has format error. stop trying, move to next page. (" + e2.Message + ").");
 			} catch (Exception e) {
-				Output.Log("general error : " + e.Message + ". move to next page");
+				Output.LogException("general error : " + e.Message + ". move to next page");
 			}
 		}
 	}//class

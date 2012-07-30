@@ -5,7 +5,11 @@ namespace StockFilter
 	public class Calculator
 	{
 		private static Calculator _this = new Calculator();
-		private Calculator(){}
+
+		private Calculator()
+		{
+		}
+
 		public static Calculator Static {
 			get {
 				return _this;
@@ -19,9 +23,13 @@ namespace StockFilter
 
 		}
 
-		public void CalcMA()
+		public void UpdateAll()
 		{
-			QuoteManager.Static.CalcAllQuotes(CalcQuote_MA);
+			try {
+				QuoteManager.Static.CalcAllQuotes(null);
+			} catch (Exception e) {
+				Output.LogException(e.Message);
+			}
 		}
 	}//clas
 }

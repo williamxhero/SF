@@ -14,14 +14,16 @@ namespace StockFilter
 		{
 			if (q.LastDate == 0) {
 				return pWSD.GetHistory(q);
+				//return pWSD.GetHistory(q);
 			}
 			DateTime now = DateTime.Now.ToLocalTime();
 			long nowDayTimeStamp = Util.GetUnixTimeStamp(now.Year, now.Month, now.Day);
 			if (nowDayTimeStamp > q.LastDate) {
 				date dFrom = Util.GetDate(q.LastDate);
 				date dTo = Util.GetDate(nowDayTimeStamp);
-				return pWSD.GetHistory(q, dFrom, dTo);
-			}else{
+				//return pWSD.GetHistory(q, dFrom, dTo);
+				return pWSD_G.GetHistory(q, dFrom, dTo);
+			} else {
 				Output.Log(q.Describe + " already updated to latest.");
 			}
 			return new List<dateData>();
@@ -56,29 +58,38 @@ namespace StockFilter
 			if (!TableExist(tblNm))
 				return dataList;
 
-			SqliteConnection conn = new SqliteConnection(souce);
-			conn.Open();
-			SqliteCommand cmd = conn.CreateCommand();
-			string sql = "select date, volume, open, high, low, close from " + tblNm + " order by date desc;";
-			cmd.CommandText = sql;
-			SqliteDataReader rdr = cmd.ExecuteReader();
+			SqliteConnection conn = null;
+			string sql = "";
 
-			while (rdr.Read()) {
-				dateData dd = new dateData();
-				dd._date = rdr.GetInt64(0);
-				dd._indic._volume = rdr.GetInt64(1);
-				dd._price._open = rdr.GetDouble(2);
-				dd._price._high = rdr.GetDouble(3);
-				dd._price._low = rdr.GetDouble(4);
-				dd._price._close = rdr.GetDouble(5);
-				dataList.Add(dd);
+			try {
+				conn = new SqliteConnection(souce);
+				conn.Open();
+				SqliteCommand cmd = conn.CreateCommand();
+				sql = "select date, volume, open, high, low, close from " + tblNm + " order by date desc;";
+				cmd.CommandText = sql;
+				SqliteDataReader rdr = cmd.ExecuteReader();
+
+				while (rdr.Read()) {
+					dateData dd = new dateData();
+					dd._date = rdr.GetInt64(0);
+					dd._indic._volume = rdr.GetInt64(1);
+					dd._price._open = rdr.GetDouble(2);
+					dd._price._high = rdr.GetDouble(3);
+					dd._price._low = rdr.GetDouble(4);
+					dd._price._close = rdr.GetDouble(5);
+					dataList.Add(dd);
+				}
+			} catch (Exception e) {
+				Output.LogException(" sql (" + sql + ") error : " + e.Message); 
 			}
-			conn.Close();
+			if (conn != null)
+				conn.Close();
 			return dataList;
 		}
 
 		//WebStockDetail pWSD = new WebStockDetail_GOOG();
 		private WebStockDetail pWSD = new WebStockDetail_YAHOO();
+		private WebStockDetail pWSD_G = new WebStockDetail_GOOG();
 
 		private string GetTableNameHistory_DB(Quote q)
 		{

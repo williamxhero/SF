@@ -9,7 +9,7 @@ public partial class MainWindow: Gtk.Window
 	public MainWindow(): base (Gtk.WindowType.Toplevel)
 	{
 		Build();
-		Calculator.Static.CalcMA();
+		Calculator.Static.UpdateAll();
 		//QuoteManager.Static.LoadInformation();
 	}
 	
