@@ -1,6 +1,7 @@
 using System;
 using Gtk;
 using StockFilter;
+using System.IO;
 
 public partial class MainWindow: Gtk.Window
 {	
@@ -9,6 +10,7 @@ public partial class MainWindow: Gtk.Window
 	public MainWindow(): base (Gtk.WindowType.Toplevel)
 	{
 		Build();
+
 		//Calculator.Static.UpdateAll();
 		QuoteManager.Static.UpdateAllQuotes();
 	}
