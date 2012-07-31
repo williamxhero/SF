@@ -175,21 +175,27 @@ namespace StockFilter
 					string low = row.Elements [4].Value;
 					string vol = row.Elements [5].Value;
 
-					Console.WriteLine(code4src + "|" + time + "|" + open + "|" + close + "|" + high + "|" + low + "|" + vol);
+					Output.Log(code4src + "|" + time + "|" + open + "|" + close + "|" + high + "|" + low + "|" + vol);
 
-					dateData dd = new dateData();
-					string[] date_time = time.Split(" ".ToCharArray());
-					dd._date = Util.GetUnixTimeStamp(date_time[0]);
-					dd._indic._volume = long.Parse(vol);
-					dd._price._open = double.Parse(open);
-					dd._price._high = double.Parse(high);
-					dd._price._low = double.Parse(low);
-					dd._price._close = double.Parse(close);
-					list.Add(dd);
+					try {
+						dateData dd = new dateData();
+						string[] date_time = time.Split(" ".ToCharArray());
+						dd._date = Util.GetUnixTimeStamp(date_time [0]);
+						dd._indic._volume = long.Parse(vol);
+						dd._price._open = double.Parse(open);
+						dd._price._high = double.Parse(high);
+						dd._price._low = double.Parse(low);
+						dd._price._close = double.Parse(close);
+						list.Add(dd);
+					} catch (Exception e) {
+						string desc = code4src + " data from web format incorrect : " + e.Message;
+						Output.Log(desc);
+						Output.LogException(desc);
+					}
 				}
 
 				Output.Log("YAHOO get history " + code4src + " from : " + date_from + " to : " + date_to);
-			}catch (Exception e) {
+			} catch (Exception e) {
 				Output.LogException("get From Google failed : " + code4src + " " + date_from + " - " + date_to + " msg : " + e.Message);
 			}
 

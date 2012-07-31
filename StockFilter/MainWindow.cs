@@ -9,8 +9,8 @@ public partial class MainWindow: Gtk.Window
 	public MainWindow(): base (Gtk.WindowType.Toplevel)
 	{
 		Build();
-		Calculator.Static.UpdateAll();
-		//QuoteManager.Static.LoadInformation();
+		//Calculator.Static.UpdateAll();
+		QuoteManager.Static.UpdateAllQuotes();
 	}
 	
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)

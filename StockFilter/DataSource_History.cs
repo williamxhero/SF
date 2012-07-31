@@ -12,19 +12,28 @@ namespace StockFilter
 	{
 		public List<dateData> GetHistory_Web(Quote q)
 		{
-			if (q.LastDate == 0) {
+			long lastDate = q.LastDate;
+			if (lastDate == 0) {
 				return pWSD.GetHistory(q);
 				//return pWSD.GetHistory(q);
 			}
-			DateTime now = DateTime.Now.ToLocalTime();
-			long nowDayTimeStamp = Util.GetUnixTimeStamp(now.Year, now.Month, now.Day);
-			if (nowDayTimeStamp > q.LastDate) {
-				date dFrom = Util.GetDate(q.LastDate);
-				date dTo = Util.GetDate(nowDayTimeStamp);
-				//return pWSD.GetHistory(q, dFrom, dTo);
-				return pWSD_G.GetHistory(q, dFrom, dTo);
+
+			DateTime DTTo = DateTime.Now.ToLocalTime();
+			DTTo = DTTo.AddDays(-1);//as today will not be the histroy
+			long stampTo = Util.GetUnixTimeStamp(DTTo);
+
+			date dtFrom = Util.GetDate(lastDate);
+			DateTime DTFrom = new DateTime(dtFrom.year, dtFrom.month, dtFrom.day);
+			DTFrom = DTFrom.AddDays(1); //the bland data only begins from the next day (of the latest data we have)
+			long stampFrom = Util.GetUnixTimeStamp(DTFrom);
+
+			if (stampTo > stampFrom) {
+				date dFrom = Util.GetDate(stampFrom);
+				date dTo = Util.GetDate(stampTo);
+				return pWSD.GetHistory(q, dFrom, dTo);
+				//return pWSD_G.GetHistory(q, dFrom, dTo);
 			} else {
-				Output.Log(q.Describe + " already updated to latest.");
+				Output.Log(q.Describe + " already updated to latest : " + dtFrom);
 			}
 			return new List<dateData>();
 		}
@@ -35,7 +44,7 @@ namespace StockFilter
 			SqliteConnection conn = new SqliteConnection(souce);
 			conn.Open();
 			SqliteCommand cmd = conn.CreateCommand();
-
+			int entries = 0;
 			foreach (dateData dt in q.History) {
 				string sql = "insert or replace into " + GetTableNameHistory_DB(q) + 
 					" values(" + dt._date + 
@@ -47,8 +56,10 @@ namespace StockFilter
 					");";
 				cmd.CommandText = sql;
 				cmd.ExecuteNonQuery();
+				entries++;
 			}
 			conn.Close();
+			Output.Log(q.Describe + " history save -> DB " + entries + " entries");
 		}
 
 		public List<dateData> LoadHistory_DB(Quote q)
@@ -89,7 +100,7 @@ namespace StockFilter
 
 		//WebStockDetail pWSD = new WebStockDetail_GOOG();
 		private WebStockDetail pWSD = new WebStockDetail_YAHOO();
-		private WebStockDetail pWSD_G = new WebStockDetail_GOOG();
+		//private WebStockDetail pWSD_G = new WebStockDetail_GOOG();
 
 		private string GetTableNameHistory_DB(Quote q)
 		{

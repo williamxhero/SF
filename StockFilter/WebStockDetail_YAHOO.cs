@@ -6,41 +6,46 @@ namespace StockFilter
 {
 	public class WebStockDetail_YAHOO : WebStockDetail
 	{
-		public WebStockDetail_YAHOO() : base(new source_YAHOO())
-		{
-		}
+		public WebStockDetail_YAHOO() : base(new source_YAHOO()){}
 
 		protected override List<dateData> DoGetHistory(string  code4src, date date_from, date date_to)
 		{
+			string description = code4src + " from : " + date_from + " to : " + date_to;
+
 			List<dateData> list = new List<dateData>();
+			//long dateFrom = Util.GetUnixTimeStamp(date_from);
+			string URI = "";
+
 			try {
-				string content;
+
 				if (date_from.year == 0 || date_to.year == 0) {
-					Output.Log("update quote " + code4src + " (desn't have all datas data)");
-					content = WebUtil.Static.FetchWebPage(@"http://ichart.finance.yahoo.com/table.csv?s=" + code4src);
+					//Output.Log("update quote " + code4src + " (desn't have all datas data)");
+					URI = @"http://ichart.finance.yahoo.com/table.csv?s=" + code4src;
 				} else {
-					Output.Log("update quote " + code4src + " (desn't have data " + date_from + " to " + date_to + ")");
-					string URI = @"http://ichart.finance.yahoo.com/table.csv?s=" + code4src 
-						+ "&a=" + date_from.month
-						+ "&b=" + date_from.day 
+					//Output.Log("update quote " + code4src + " (desn't have data " + date_from + " to " + date_to + ")");
+					URI = @"http://ichart.finance.yahoo.com/table.csv?s=" + code4src 
+						+ "&a=" + (date_from.month - 1)
+						+ "&b=" + date_from.day
 						+ "&c=" + date_from.year 
-						+ "&d=" + date_to.month
+						+ "&d=" + (date_to.month - 1)
 						+ "&e=" + date_to.day 
 						+ "&f=" + date_to.year;
-					content = WebUtil.Static.FetchWebPage(URI);
 				}
 
 				//File.WriteAllText("code" + code4src + ".txt", content);
+				string content = WebUtil.Static.FetchWebPage(URI);
 
 				string[] lines = content.Split("\n".ToCharArray());
-				bool firstTitleLine = true;
+				if(lines.Length <= 2){
+					Output.Log(description + " NO data, ignore content : \"" + content + "\"");
+					return list;
+				}
+
+				//titles:
+				lines[0] = "";
+
 				foreach (string line in lines) {
-
-					if (firstTitleLine) {
-						firstTitleLine = false;
-						continue;
-					}
-
+					if(line.Length == 0) continue;
 					string[] values = line.Split(",".ToCharArray());
 					if (values.Length >= 5) {
 						dateData dt = new dateData();
@@ -51,12 +56,16 @@ namespace StockFilter
 						dt._price._close = double.Parse(values [4]);
 						dt._indic._volume = long.Parse(values [5]);
 						list.Add(dt);
+					}else{
+						Output.Log("format error, column less than 5 : \"" + line+ "\"");
 					}
 				}
 
-				Output.Log("YAHOO get history " + code4src + " from : " + date_from + " to : " + date_to);
+				Output.Log("YAHOO get history " + description);
+			
+			
 			} catch (Exception e) {
-				Output.LogException("Get history Error. code : " + code4src + " from : " + date_from + " to : " + date_to + "(msg : " + e.Message);
+				Output.LogException("Get history Error. code : " + description + "(msg : " + e.Message);
 			}
 
 			return list;

@@ -26,7 +26,7 @@ namespace StockFilter
 		public void UpdateAll()
 		{
 			try {
-				QuoteManager.Static.CalcAllQuotes(null);
+				QuoteManager.Static.CalcAllQuotes(CalcQuote_MA);
 			} catch (Exception e) {
 				Output.LogException(e.Message);
 			}

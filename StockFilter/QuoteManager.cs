@@ -53,6 +53,14 @@ namespace StockFilter
 			SaveAllQuotesInfo();
 		}
 
+		public void UpdateAllQuotes()
+		{
+			LoadInformation();
+			foreach (var q in _allQuote) {
+				q.Value.UpdateHistory();
+			}
+		}
+
 		public void CalcAllQuotes(CalcQuote cq)
 		{
 			LoadInformation();

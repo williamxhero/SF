@@ -71,10 +71,12 @@ namespace StockFilter
 		public void LoadHistory()
 		{
 			_history = DataSource.Static.LoadHistory_DB(this);
+			Output.Log("History loaded. " + _history.Count +" entries ");
 			if(_history.Count == 0) {
 				Output.Log( Describe + " history is empty");
+				return;
 			}
-			UpdateHistory();
+			SortHistory();
 		}
 		
 		/// <summary>
@@ -86,16 +88,18 @@ namespace StockFilter
 				_history.Clear();
 				_history = null;
 			}
+			Output.Log("History Data Unloaded");
 		}
 
-		private void UpdateHistory()
+		public void UpdateHistory()
 		{
-			SortHistory();
+			Output.Log("\nUpdate history for" + Describe);
+
+			LoadHistory();
 			List<dateData> newData = DataSource.Static.GetHistory_Web(this);
 			if (newData.Count > 0) {
 				newData.Sort();
-
-				WriteListToFile("list_from_web.txt", newData);
+				//WriteListToFile("list_from_web.txt", newData);
 				_history.AddRange(newData);
 				DataSource.Static.SaveHistory_DB(this);
 			}else{
@@ -104,6 +108,8 @@ namespace StockFilter
 			//load after save to check to correctness of DB.
 			//newData = DataSource.Static.LoadHistory_DB(this);
 			//WriteListToFile("list_from_DB.txt", newData);
+
+			UnloadHistory();
 		}
 	}//class
 

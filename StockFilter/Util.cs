@@ -56,6 +56,11 @@ namespace StockFilter
 			return dt;
 		}
 
+		public static long GetUnixTimeStamp(DateTime dt)
+		{
+			return GetUnixTimeStamp(dt.Year, dt.Month, dt.Day);
+		}
+
 		public static long GetUnixTimeStamp(string date_str)
 		{
 			return GetUnixTimeStamp(StringToDate(date_str));
