@@ -27,9 +27,18 @@ namespace StockFilter
 
 	public struct information
 	{
-		public int _code;
+		private int _code;
 		public market _market;
 		public string _name; ///< text code like MSFT 吴忠仪表
+		public string CodeStr {
+			get{ return _code.ToString("D6");}
+		}
+
+		public int CodeInt {
+			get{ return _code;}
+			set{ _code = value;}
+		}
+
 		public void copy(information other)
 		{
 			_code = other._code;

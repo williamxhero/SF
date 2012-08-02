@@ -87,7 +87,7 @@ namespace StockFilter
 
 			curpos = pos_after_end;
 
-			info._code = nCode;
+			info.CodeInt = nCode;
 			info._market._value = market.type.ShenZhen;
 			info._name = strName;
 

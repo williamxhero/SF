@@ -113,21 +113,44 @@ namespace StockFilter
 		private void CreateDBHistory(Quote q)
 		{
 			if (!File.Exists(dbfile) || !TableExist(GetTableNameHistory_DB(q))) {
-				DoCreateDBHistory(q);
+					DoCreateDBHistory(q);
 			}
 		}
 
-		private void DoCreateDBHistory(Quote q)
+		private void _DoCreateDBHistroy(SqliteConnection conn, string tblName)
 		{
-			SqliteConnection conn = new SqliteConnection(souce);
 			conn.Open();
 			SqliteCommand cmd = conn.CreateCommand();
 
 			//cmd.CommandText = "drop table stock_info";
 			//cmd.ExecuteNonQuery();
 
-			cmd.CommandText = "CREATE TABLE if not exists " + GetTableNameHistory_DB(q) + "(date INTEGER not null UNIQUE primary key, volume INTEGER, open REAL, high REAL, low REAL, close REAL);";
+			cmd.CommandText = "CREATE TABLE if not exists " + tblName + "(date INTEGER not null UNIQUE primary key, volume INTEGER, open REAL, high REAL, low REAL, close REAL);";
 			cmd.ExecuteNonQuery();
+		}
+
+		private void DoCreateDBHistory(Quote q)
+		{
+			string tblName = GetTableNameHistory_DB(q);
+			SqliteConnection conn = null;
+			const int tryTimes = 1;
+			for (int i = 0; i <= tryTimes; i ++) {
+				try {
+					if(conn != null){
+						conn.Close();
+					}
+					conn = new SqliteConnection(souce);
+					_DoCreateDBHistroy(conn, tblName);
+					break;
+				} catch (Exception e) {
+					string msg = "create table[" + tblName + "] failed.";
+					if(i < tryTimes){
+						msg += "Will try again " + ( i + 1) + "/" + tryTimes + ".";
+					}
+					msg += "msg : " + e.Message;
+					Output.Log( msg );
+				}
+			}
 
 			conn.Close();
 		}

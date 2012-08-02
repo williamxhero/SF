@@ -2,17 +2,13 @@ using System;
 using Gtk;
 using StockFilter;
 using System.IO;
+using StockFilter;
 
 public partial class MainWindow: Gtk.Window
 {	
-	//private StockFilter.DataSource _dat = new StockFilter.DataSource();
-
 	public MainWindow(): base (Gtk.WindowType.Toplevel)
 	{
 		Build();
-
-		//Calculator.Static.UpdateAll();
-		QuoteManager.Static.UpdateAllQuotes();
 	}
 	
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
@@ -21,13 +17,19 @@ public partial class MainWindow: Gtk.Window
 		a.RetVal = true;
 	}
 
-	protected void FetchFromNet(object sender, EventArgs e)
+	protected void UpdateAllQuotes(object sender, EventArgs e)
 	{
+		QuoteManager.Static.UpdateAllQuotes();
+	}	
 
-	}	protected void AuthorClicked(object sender, EventArgs e)
+	protected void AuthorClicked(object sender, EventArgs e)
 	{
 		throw new System.NotImplementedException();
+	}	
+
+	protected void CALC_MA(object sender, EventArgs e)
+	{
+		Calculator.Static.CalculateALL(Calculator.Static.Calc_MA);
 	}
 
-
-}
+}//class

@@ -68,11 +68,11 @@ namespace StockFilter
 				sql = "select si_market, si_code, si_name from " + TableNameInfo + ";";
 				cmd.CommandText = sql;
 				SqliteDataReader rdr = cmd.ExecuteReader();
-				information info;
+				information info = information.EMPTY;
 				int count = 0;
 				while (rdr.Read()) {
 					info._market._value = (market.type)rdr.GetInt32(0);
-					info._code = rdr.GetInt32(1);
+					info.CodeInt = rdr.GetInt32(1);
 					info._name = rdr.GetString(2);
 					Quote q = new Quote(info);
 					allQ.Add(q);

@@ -17,6 +17,11 @@ namespace StockFilter
 			if(w != null) w.Close();
 		}
 
+		public static void LogNR(string str)
+		{
+			Console.Write(str);
+		}
+
 		public static void Log(string str)
 		{
 			Console.WriteLine(str);

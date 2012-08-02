@@ -6,6 +6,8 @@ public partial class MainWindow
 	private global::Gtk.UIManager UIManager;
 	private global::Gtk.Action FetchAction;
 	private global::Gtk.Action refreshAction;
+	private global::Gtk.Action CalculateAction;
+	private global::Gtk.Action MAAction;
 	private global::Gtk.VBox vbox1;
 	private global::Gtk.MenuBar menubar1;
 	private global::Gtk.ScrolledWindow GtkScrolledWindow;
@@ -23,9 +25,15 @@ public partial class MainWindow
 		this.FetchAction = new global::Gtk.Action ("FetchAction", global::Mono.Unix.Catalog.GetString ("Fetch"), null, null);
 		this.FetchAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Fetch");
 		w1.Add (this.FetchAction, null);
-		this.refreshAction = new global::Gtk.Action ("refreshAction", global::Mono.Unix.Catalog.GetString ("Net"), null, "gtk-refresh");
+		this.refreshAction = new global::Gtk.Action ("refreshAction", global::Mono.Unix.Catalog.GetString ("Update All Quotes"), null, "gtk-refresh");
 		this.refreshAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Net");
 		w1.Add (this.refreshAction, "<Primary><Mod2>n");
+		this.CalculateAction = new global::Gtk.Action ("CalculateAction", global::Mono.Unix.Catalog.GetString ("Calculate"), null, null);
+		this.CalculateAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Calculate");
+		w1.Add (this.CalculateAction, null);
+		this.MAAction = new global::Gtk.Action ("MAAction", global::Mono.Unix.Catalog.GetString ("MA"), null, null);
+		this.MAAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("MA");
+		w1.Add (this.MAAction, null);
 		this.UIManager.InsertActionGroup (w1, 0);
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -34,10 +42,9 @@ public partial class MainWindow
 		this.WindowPosition = ((global::Gtk.WindowPosition)(4));
 		// Container child MainWindow.Gtk.Container+ContainerChild
 		this.vbox1 = new global::Gtk.VBox ();
-		this.vbox1.Name = "vbox1";
 		this.vbox1.Spacing = 6;
 		// Container child vbox1.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu name='FetchAction' action='FetchAction'><menuitem name='refreshAction' action='refreshAction'/></menu></menubar></ui>");
+		this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu name='FetchAction' action='FetchAction'><menuitem name='refreshAction' action='refreshAction'/></menu><menu name='CalculateAction' action='CalculateAction'><menuitem name='MAAction' action='MAAction'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add (this.menubar1);
@@ -61,7 +68,7 @@ public partial class MainWindow
 		this.hpaned1 = new global::Gtk.HPaned ();
 		this.hpaned1.CanFocus = true;
 		this.hpaned1.Name = "hpaned1";
-		this.hpaned1.Position = 667;
+		this.hpaned1.Position = 680;
 		// Container child hpaned1.Gtk.Paned+PanedChild
 		this.InputAuthor = new global::Gtk.Entry ();
 		this.InputAuthor.CanFocus = true;
@@ -87,11 +94,12 @@ public partial class MainWindow
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();
 		}
-		this.DefaultWidth = 772;
+		this.DefaultWidth = 752;
 		this.DefaultHeight = 646;
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
-		this.refreshAction.Activated += new global::System.EventHandler (this.FetchFromNet);
+		this.refreshAction.Activated += new global::System.EventHandler (this.UpdateAllQuotes);
+		this.MAAction.Activated += new global::System.EventHandler (this.CALC_MA);
 		this.AuthorBtn.Clicked += new global::System.EventHandler (this.AuthorClicked);
 	}
 }

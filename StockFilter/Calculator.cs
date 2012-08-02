@@ -2,7 +2,7 @@ using System;
 
 namespace StockFilter
 {
-	public class Calculator
+	public partial class Calculator
 	{
 		private static Calculator _this = new Calculator();
 
@@ -16,17 +16,17 @@ namespace StockFilter
 			}
 		}
 
-		private void CalcQuote_MA(Quote q)
+		public void CalculateALL(CalcQuote cq)
 		{
-			Output.Log("calculate MA trend of " + q.Name);
-
-
-		}
-
-		public void UpdateAll()
-		{
+			QuoteManager qm = QuoteManager.Static;
 			try {
-				QuoteManager.Static.CalcAllQuotes(CalcQuote_MA);
+				qm.LoadInformation();
+				foreach (var q in qm.AllQuotes) {
+					q.Value.LoadHistory();
+					if (cq != null)
+						cq(q.Value);
+					q.Value.UnloadHistory();
+				}
 			} catch (Exception e) {
 				Output.LogException(e.Message);
 			}

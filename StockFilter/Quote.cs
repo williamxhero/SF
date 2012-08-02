@@ -13,16 +13,20 @@ namespace StockFilter
 		private information _info;
 		private List<dateData> _history = null;
 
+		public information Info{
+			get{return _info;}
+		}
+
 		public List<dateData> History {
 			get{ return _history;}
 		}
 
 		public string CodeStr {
-			get{ return _info._code.ToString("D6");}
+			get{ return _info.CodeStr;}
 		}
 
 		public int CodeInt {
-			get{ return _info._code;}
+			get{ return _info.CodeInt;}
 		}
 
 		public string Name {
@@ -101,6 +105,7 @@ namespace StockFilter
 				newData.Sort();
 				//WriteListToFile("list_from_web.txt", newData);
 				_history.AddRange(newData);
+				Output.Log(Describe + " updated " + Util.GetDate(_history[0]._date) + " - " + Util.GetDate(LastDate));
 				DataSource.Static.SaveHistory_DB(this);
 			}else{
 				Output.Log("didn't get new data of (" + Describe + ") from web");

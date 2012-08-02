@@ -87,6 +87,8 @@
     <Compile Include="DataSource.cs" />
     <Compile Include="DataSource_Information.cs" />
     <Compile Include="DataSource_History.cs" />
+    <Compile Include="Market.cs" />
+    <Compile Include="Calculator_MA.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

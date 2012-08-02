@@ -10,8 +10,12 @@ namespace StockFilter
 	/// </summary>
 	public partial class QuoteManager
 	{
-		private QuoteManager()	{	}
+		private QuoteManager()
+		{
+		}
+
 		private static QuoteManager _this = new QuoteManager();
+
 		public static QuoteManager Static {
 			get {
 				return _this;
@@ -29,6 +33,9 @@ namespace StockFilter
 		/// </summary>
 		private Dictionary<int, Quote> _allQuote = new Dictionary<int, Quote>();
 
+		public Dictionary<int, Quote> AllQuotes {
+			get{ return _allQuote;}
+		}
 		/// <summary>
 		/// load from desk
 		/// </summary>
@@ -36,7 +43,7 @@ namespace StockFilter
 		{
 			_allQuote.Clear();
 			List<Quote> Qlist = DataSource.Static.LoadQuotesInfo_DB();
-			int i  = 0;
+			int i = 0;
 			foreach (Quote q in Qlist) {
 				//if(i > 100) break;
 				_allQuote.Add(q.CodeInt, q);
@@ -58,16 +65,6 @@ namespace StockFilter
 			LoadInformation();
 			foreach (var q in _allQuote) {
 				q.Value.UpdateHistory();
-			}
-		}
-
-		public void CalcAllQuotes(CalcQuote cq)
-		{
-			LoadInformation();
-			foreach (var q in _allQuote) {
-				q.Value.LoadHistory();
-				if(cq != null) cq(q.Value);
-				q.Value.UnloadHistory();
 			}
 		}
 

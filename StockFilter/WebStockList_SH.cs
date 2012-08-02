@@ -68,7 +68,7 @@ namespace StockFilter
 
 			curpos = name_pos_end + 5;
 
-			info._code = nCode;
+			info.CodeInt = nCode;
 			info._market._value = market.type.ShangHai;
 			info._name = strName;
 
@@ -81,8 +81,8 @@ namespace StockFilter
 			if(szzs_added) return;
 			szzs_added = true;
 
-			information info;
-			info._code = 000001;
+			information info = information.EMPTY;
+			info.CodeInt = 1;
 			info._market._value = market.type.ShangHai;
 			info._name = "上证指数";
 			SaveInfomation(info);
